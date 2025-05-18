@@ -25,3 +25,14 @@ html, body, #root {
 body {
     display: flex;
 }
+
+/* .county {
+    fill: gray;
+    stroke: white;
+    stroke-width: 0.5;
+}
+
+.outerEdge {
+    fill: none;
+    stroke: black;
+} */
