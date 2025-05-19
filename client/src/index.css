@@ -26,6 +26,19 @@ body {
     display: flex;
 }
 
+#county-selector {
+    overflow-y: scroll;
+}
+
+.county-choice {
+    font-size: 0.9rem;
+    padding: 3px;
+    margin: 2px;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 /* .county {
     fill: gray;
     stroke: white;
