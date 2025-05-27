@@ -30,6 +30,22 @@ body {
     overflow-y: scroll;
 }
 
+.county-geo {
+    fill: gray;
+}
+
+.county-geo:hover {
+    fill: #aaa;
+}
+
+.county-geo-incident {
+    fill: salmon;
+}
+
+.county-geo-incident:hover {
+    fill: lightsalmon;
+}
+
 .county-choice {
     font-size: 0.9rem;
     padding: 3px;
@@ -37,6 +53,26 @@ body {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.incident-list > * {
+    color: white;
+    border-radius: 10px;
+}
+
+.bars > :nth-child(1), .incident-list > :nth-child(1){
+    background-color: dodgerblue;
+    fill: dodgerblue;
+}
+
+.bars > :nth-child(2), .incident-list > :nth-child(2) {
+    background-color: darkviolet;
+    fill: darkviolet;
+}
+
+.bars > :nth-child(3), .incident-list > :nth-child(3) {
+    background-color: darkorange;
+    fill: darkorange;
 }
 
 /* .county {

@@ -79,7 +79,7 @@ function drawMap(selectorElement, svgElement, width, height, props){
         .attr('stroke', 'white')
         .attr('stroke-width', 0.5)
         .attr('d', mapPath)
-        .on('click', zoomToCounty)
+        .on('click', function(event, d){handleClick(this, d.properties.fullName, props.addIncident)})
         .on('mouseover', highlight)
         .on('mouseout', unhighlight);
 
@@ -121,18 +121,18 @@ function drawMap(selectorElement, svgElement, width, height, props){
         .attr('id', (d) => `county-choice-${d.properties.name}`)
         .attr('class', 'county-choice')
         .style('background-color', 'white')
-        .on('click', function(event, d){zoomToCounty(event, d)})
+        // .on('click', function(event, d){zoomToCounty(event, d)})
         .on('mouseover', highlight)
         .on('mouseout', unhighlight);
 
 
     function highlight(event, d){
-        d3.select(`#county-geo-${d.properties.name}`).attr('fill', '#ff0');
+        // d3.select(`#county-geo-${d.properties.name}`).attr('fill', '#ff0');
         d3.select(`#county-choice-${d.properties.name}`).style('background-color', '#ff0');
     }
 
     function unhighlight(event, d){
-        d3.select(`#county-geo-${d.properties.name}`).attr('fill', 'gray');
+        // d3.select(`#county-geo-${d.properties.name}`).attr('fill', 'gray');
         d3.select(`#county-choice-${d.properties.name}`).style('background-color', 'white');
     }
         
@@ -144,7 +144,7 @@ function drawMap(selectorElement, svgElement, width, height, props){
 
     function zoomToCounty(event, d){
         // Do something in parent component
-        props.getCurrentCounty(d.properties.fullName);
+        // props.getCurrentCounty(d.properties.fullName);
         const [[x1, y1], [x2, y2]] = mapPath.bounds(d);
         // Prevent reset when clicking a county
         event.stopPropagation();
@@ -158,5 +158,17 @@ function drawMap(selectorElement, svgElement, width, height, props){
                     .translate((x1 + x2) / -2, (y1 + y2) / -2),
                 // d3.pointer(event, g.node())
             );
+    }
+
+    function handleClick(element, county, addIncident){
+        if(d3.select(element).classed('county-geo-incident')){
+            const currentYear = d3.select('#year-selector').property('value');
+            const currentMonth =  d3.select('#month-selector').property('value');        
+            addIncident({
+                year: currentYear,
+                month: currentMonth,
+                county: county
+            });
+        }
     }
 }
