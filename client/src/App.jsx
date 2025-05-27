@@ -4,6 +4,7 @@ import CaliMap from "./components/map";
 import TimeSelector from "./components/timeSelect";
 import IncidentLabel from "./components/incidentLabel";
 import WeatherData from "./components/weather";
+import DamageData from "./components/damages";
 import { forEach } from "lodash";
 
 export default function App(){
@@ -22,8 +23,8 @@ export default function App(){
     }, []);
 
     const [selectedYearMonth, setYearMonth] = useState({year: 'None', month: 'None'})
-    useEffect(() => {
-        const result = [];      
+    const selectedYearMonthRef = useRef({year: 'None', month: 'None'});
+    useEffect(() => {   
         d3.selectAll('.county-geo').classed('county-geo-incident', false);
         if (selectedYearMonth.year !== 'None' && selectedYearMonth.month !== 'None'){
             historyData.forEach((incident) => {
@@ -34,7 +35,6 @@ export default function App(){
         }
     }, [historyData, selectedYearMonth])
 
-    const [selectedCounties, setSelectedCounties] = useState([]);
     const [selectedIncidents, setSelectedIncidents] = useState([]);
 
     function addIncident(incident){
@@ -52,7 +52,7 @@ export default function App(){
             Fatalities: data.Fatalities,
             StructuresDestroyed: data.StructuresDestroyed,
             StructuresDamaged: data.StructuresDamaged,
-            PropertyValue_Damage: data.PropertyValue_Damage,
+            PropetyValue_Damage: data.PropetyValue_Damage,
             Drought_Index: data.Drought_Index,
             Precipitation: data.Precipitation,
             Temperature: data.Temperature,
@@ -85,8 +85,8 @@ export default function App(){
     }
 
     const mapProps = {
-        selectedCounties: selectedCounties,
-        selectCounties: (counties) => setSelectedCounties(counties),
+        historyData: historyDataRef,
+        selectedYearMonth: selectedYearMonthRef,
         selectedIncidents: selectedIncidents,
         addIncident: (incident) => addIncident(incident),
         removeIncident: (index) => removeIncident(index)
@@ -125,7 +125,7 @@ export default function App(){
                     </div>
                     <div className="h-[calc(50%_-_1rem)] p-2">
                         <div className="border-2 border-gray-300 rounded-xl h-full">
-                            
+                            <DamageData data={selectedIncidents}/>
                         </div>
                     </div>
                 </div>

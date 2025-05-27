@@ -4,12 +4,9 @@ import { isEmpty, debounce } from 'lodash';
 
 const margin = {top: 5, bottom: 8, left: 30, right: 5};
 
-export default function DroughtGraph(props){
+export default function FireBarChart(props){
     const containerRef = useRef(null);
     const svgRef = useRef(null);
-
-    // const [weatherData, setWeather] = useState([]);
-    console.log(props);
     
     const weatherData = props.data;
     
@@ -23,7 +20,7 @@ export default function DroughtGraph(props){
                     if (entry.target !== containerRef.current) continue;
                     const { width, height } = entry.contentRect;
                     if (width && height && !isEmpty(weatherData)) {
-                        drawGraph(svgRef.current, weatherData, width, height);
+                        drawGraph(svgRef.current, weatherData, width, height, props.feature);
                     }
                 }
             }, 100) // wait at least 100 ms
@@ -48,12 +45,12 @@ export default function DroughtGraph(props){
 
 }
 
-function drawGraph(svgElement, data, width, height){
+function drawGraph(svgElement, data, width, height, feature){
     const svg = d3.select(svgElement);
     svg.selectAll('*').remove();
 
-    const yExtents = d3.extent(data.map((d) => d.Drought_Index));
-    const xCategories = [...new Set(data.map((d) => d.countyFull))];
+    const yExtents = d3.extent(data.map((d) => getFeature(d, feature)));
+    const xCategories = [...new Set(data.map((d) => `${d.countyName} ${d.year}${d.month}`))];
 
     const xScale = d3.scaleBand()
         .rangeRound([margin.left, width - margin.right])
@@ -69,9 +66,9 @@ function drawGraph(svgElement, data, width, height){
     //     .call(d3.axisBottom(xScale).ticks(0));
     svg.append('line')
         .attr('x1', margin.left)
-        .attr('y1', yScale(0)+1)
+        .attr('y1', yScale(0)+0.5)
         .attr('x2', width - margin.right)
-        .attr('y2', yScale(0)+1)
+        .attr('y2', yScale(0)+0.5)
         .attr('stroke', 'black')
         .attr('stroke-width', 1);
     
@@ -84,12 +81,16 @@ function drawGraph(svgElement, data, width, height){
     bars.selectAll('rect')
         .data(data)
         .join('rect')
-        .attr('x', (d) => xScale(d.countyFull) + xScale.bandwidth()/4)
-        .attr('y', (d) => yScale(Math.max(0, d.Drought_Index)))
-        .attr('width', xScale.bandwidth()/2)
-        .attr('height', (d) => Math.abs(yScale(0) - yScale(d.Drought_Index)))
+        .attr('x', (d) => xScale(`${d.countyName} ${d.year}${d.month}`) + xScale.bandwidth()/10)
+        .attr('y', yScale(0))
+        .attr('width', xScale.bandwidth()/1.25)
+        .attr('height', 0)
         .attr('class', 'bar')
-        .attr('id', (d) => `bar-${d.county}`);
+        .attr('id', (d) => `bar-${d.county}`)
+        .transition()
+        .duration(200)
+        .attr('y', (d) => yScale(Math.max(0, getFeature(d, feature))))
+        .attr('height', (d) => Math.abs(yScale(0) - yScale(getFeature(d, feature))))
 }
 
 function calcYAxis(extent){
@@ -100,4 +101,34 @@ function calcYAxis(extent){
     } else {
         return extent
     }
+}
+
+function getFeature(datum, feature){
+    switch (feature){
+        case 'AcresBurned':
+            return datum.AcresBurned/1000;
+        case 'Injuries':
+            return datum.Injuries;
+        case 'Fatalities':
+            return datum.Fatalities;
+        case 'StructuresDestroyed':
+            return datum.StructuresDestroyed;
+        case 'StructuresDamaged':
+            return datum.StructuresDamaged;
+        case 'PropetyValue_Damage':
+            return datum.PropetyValue_Damage/1000000;
+        case 'Drought_Index':
+            return datum.Drought_Index;
+        case 'Precipitation':
+            return datum.Precipitation;
+        case 'Temperature':
+            return datum.Temperature;
+        case 'Heating_Degree_Days':
+            return datum.Heating_Degree_Days;
+        case 'Cooling_Degree_Days':
+            return datum.Cooling_Degree_Days;
+        default:
+            return null;
+    }
+    
 }

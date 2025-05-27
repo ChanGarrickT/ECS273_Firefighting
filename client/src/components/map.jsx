@@ -11,7 +11,7 @@ export default function CaliMap(props){
     const containerRef = useRef(null);
     const selectorRef = useRef(null);
     const svgRef = useRef(null);
-    const counties = Cali.objects.subunits;  
+    const counties = Cali.objects.subunits;
 
     useEffect(() => {
         if (!containerRef.current || !selectorRef.current || !svgRef.current) return;
@@ -24,6 +24,7 @@ export default function CaliMap(props){
                 const { width, height } = entry.contentRect;
                 if (width && height && !isEmpty(counties)) {
                     drawMap(selectorRef.current, svgRef.current, width*3/4, height, props);
+                    // highlightIncidents(props);
                 }
             }
         }, 100) // wait at least 100 ms
@@ -35,6 +36,7 @@ export default function CaliMap(props){
         const { width, height } = containerRef.current.getBoundingClientRect();
         if (width && height) {
             drawMap(selectorRef.current, svgRef.current, width*3/4, height, props);
+            // highlightIncidents(props);
         }
 
         return () => resizeObserver.disconnect();
@@ -125,7 +127,6 @@ function drawMap(selectorElement, svgElement, width, height, props){
         .on('mouseover', highlight)
         .on('mouseout', unhighlight);
 
-
     function highlight(event, d){
         // d3.select(`#county-geo-${d.properties.name}`).attr('fill', '#ff0');
         d3.select(`#county-choice-${d.properties.name}`).style('background-color', '#ff0');
@@ -171,5 +172,17 @@ function drawMap(selectorElement, svgElement, width, height, props){
                 countyName: name
             });
         }
+    }
+}
+
+function highlightIncidents(props){
+    const {selectedYear, selectedMonth} = props.selectedYearMonth.current;
+    d3.selectAll('.county-geo').classed('county-geo-incident', false);                   
+    if (selectedYear !== 'None' && selectedMonth !== 'None'){
+        props.historyData.current.forEach((incident) => {
+            if(incident.Started === selectedYear + selectedMonth){
+                d3.select(`#county-geo-${incident.County}`).classed('county-geo-incident', true);            
+            }
+        })
     }
 }
