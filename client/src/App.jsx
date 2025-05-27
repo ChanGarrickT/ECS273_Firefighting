@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import CaliMap from "./components/map";
 import TimeSelector from "./components/timeSelect";
 import IncidentLabel from "./components/incidentLabel";
@@ -11,15 +11,19 @@ export default function App(){
     const changeMode = (e) => setMode(e.target.value);
 
     const [historyData, setHistoryData] = useState([]);
+    const historyDataRef = useRef([]);
     useEffect(() => {
         fetch("http://localhost:8000/history")
             .then((res) => res.json())
-            .then((data) => setHistoryData(data));
+            .then((data) => {
+                setHistoryData(data);
+                historyDataRef.current = data;
+            });
     }, []);
 
     const [selectedYearMonth, setYearMonth] = useState({year: 'None', month: 'None'})
     useEffect(() => {
-        const result = [];
+        const result = [];      
         d3.selectAll('.county-geo').classed('county-geo-incident', false);
         if (selectedYearMonth.year !== 'None' && selectedYearMonth.month !== 'None'){
             historyData.forEach((incident) => {
@@ -34,16 +38,37 @@ export default function App(){
     const [selectedIncidents, setSelectedIncidents] = useState([]);
 
     function addIncident(incident){
+        let data = null;
+        const history = historyDataRef.current;
+        for(let d = 0; d < history.length; d++){
+            if(history[d].Started === incident.year + incident.month && history[d].County === incident.countyName){
+                data = history[d];
+            }
+        }
+        const incidentWithData = {
+            ...incident,
+            AcresBurned: data.AcresBurned,
+            Injuries: data.Injuries,
+            Fatalities: data.Fatalities,
+            StructuresDestroyed: data.StructuresDestroyed,
+            StructuresDamaged: data.StructuresDamaged,
+            PropertyValue_Damage: data.PropertyValue_Damage,
+            Drought_Index: data.Drought_Index,
+            Precipitation: data.Precipitation,
+            Temperature: data.Temperature,
+            Heating_Degree_Days: data.Heating_Degree_Days,
+            Cooling_Degree_Days: data.Cooling_Degree_Days
+        }
         setSelectedIncidents((prev) => {
             if(prev.length >= 3){
                 return prev;
             }
             for(let i = 0; i < prev.length; i++){
-                if(incident.year === prev[i].year && incident.month === prev[i].month && incident.county === prev[i].county){
+                if(incident.year === prev[i].year && incident.month === prev[i].month && incident.countyName === prev[i].countyName){
                     return prev;                
                 }
             }
-            return [...prev, incident];
+            return [...prev, incidentWithData];
         })
     }
 
@@ -95,7 +120,7 @@ export default function App(){
                     </div>
                     <div className="h-[calc(50%_-_1rem)] p-2">
                         <div className="border-2 border-gray-300 rounded-xl h-full">
-                            <WeatherData />
+                            <WeatherData data={selectedIncidents}/>
                         </div>
                     </div>
                     <div className="h-[calc(50%_-_1rem)] p-2">

@@ -79,7 +79,7 @@ function drawMap(selectorElement, svgElement, width, height, props){
         .attr('stroke', 'white')
         .attr('stroke-width', 0.5)
         .attr('d', mapPath)
-        .on('click', function(event, d){handleClick(this, d.properties.fullName, props.addIncident)})
+        .on('click', function(event, d){handleClick(this, d.properties.fullName, d.properties.name, props.addIncident)})
         .on('mouseover', highlight)
         .on('mouseout', unhighlight);
 
@@ -160,14 +160,15 @@ function drawMap(selectorElement, svgElement, width, height, props){
             );
     }
 
-    function handleClick(element, county, addIncident){
+    function handleClick(element, fullName, name, addIncident){
         if(d3.select(element).classed('county-geo-incident')){
             const currentYear = d3.select('#year-selector').property('value');
             const currentMonth =  d3.select('#month-selector').property('value');        
             addIncident({
                 year: currentYear,
                 month: currentMonth,
-                county: county
+                countyFull: fullName,
+                countyName: name
             });
         }
     }

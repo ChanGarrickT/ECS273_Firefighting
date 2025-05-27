@@ -20,7 +20,7 @@ export default function IncidentLabel(props){
     return (
         <div className="flex flex-row incident-list text-xs h-full">
             {props.selectedIncidents.map((incident, idx) => {
-                return <div className="mx-2 my-auto px-3 py-1" key={'name'+idx}>{incident.county} {monthConversion[incident.month]} {incident.year}<span className="ml-3 mr-0" onClick={() => props.removeIncident(idx)}>×</span></div>
+                return <div className="mx-2 my-auto px-3 py-1" key={'name'+idx}>{incident.countyFull} {monthConversion[incident.month]} {incident.year}<span className="ml-3 mr-0" onClick={() => props.removeIncident(idx)}>×</span></div>
             })}
         </div>
     )

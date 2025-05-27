@@ -2,18 +2,16 @@ import * as d3 from "d3";
 import { useEffect, useRef, useState } from "react";
 import { isEmpty, debounce } from 'lodash';
 
-const margin = {top: 5, bottom: 20, left: 20, right: 5};
+const margin = {top: 5, bottom: 8, left: 30, right: 5};
 
 export default function DroughtGraph(props){
     const containerRef = useRef(null);
     const svgRef = useRef(null);
 
     // const [weatherData, setWeather] = useState([]);
-    const weatherData = [
-        {county: 'A', droughtIndex: 69},
-        {county: 'B', droughtIndex: 37},
-        {county: 'C', droughtIndex: 42},
-    ];
+    console.log(props);
+    
+    const weatherData = props.data;
     
     useEffect(() => {
             if (!containerRef.current || !svgRef.current) return;
@@ -34,10 +32,10 @@ export default function DroughtGraph(props){
             resizeObserver.observe(containerRef.current);
     
             // Draw initially based on starting size
-            const { width, height } = containerRef.current.getBoundingClientRect();
-            if (width && height) {
-                drawGraph(svgRef.current, weatherData, width, height);
-            }
+            // const { width, height } = containerRef.current.getBoundingClientRect();
+            // if (width && height) {
+            //     drawGraph(svgRef.current, weatherData, width, height);
+            // }
     
             return () => resizeObserver.disconnect();
     }, [weatherData]);
@@ -54,8 +52,8 @@ function drawGraph(svgElement, data, width, height){
     const svg = d3.select(svgElement);
     svg.selectAll('*').remove();
 
-    const yExtents = d3.extent(data.map((d) => d.droughtIndex));
-    const xCategories = [...new Set(data.map((d) => d.county))];
+    const yExtents = d3.extent(data.map((d) => d.Drought_Index));
+    const xCategories = [...new Set(data.map((d) => d.countyFull))];
 
     const xScale = d3.scaleBand()
         .rangeRound([margin.left, width - margin.right])
@@ -63,11 +61,19 @@ function drawGraph(svgElement, data, width, height){
        
     const yScale = d3.scaleLinear()
         .range([height - margin.bottom, margin.top])
-        .domain([0, yExtents[1]]);
+        .domain(calcYAxis(yExtents))
+        .nice();
 
-    svg.append('g')
-        .attr('transform', `translate(0, ${height - margin.bottom})`)
-        .call(d3.axisBottom(xScale).ticks(0));
+    // svg.append('g')
+    //     .attr('transform', `translate(0, ${yScale(0)})`)
+    //     .call(d3.axisBottom(xScale).ticks(0));
+    svg.append('line')
+        .attr('x1', margin.left)
+        .attr('y1', yScale(0)+1)
+        .attr('x2', width - margin.right)
+        .attr('y2', yScale(0)+1)
+        .attr('stroke', 'black')
+        .attr('stroke-width', 1);
     
     svg.append('g')
         .attr('transform', `translate(${margin.left}, 0)`)
@@ -78,10 +84,20 @@ function drawGraph(svgElement, data, width, height){
     bars.selectAll('rect')
         .data(data)
         .join('rect')
-        .attr('x', (d) => xScale(d.county) + xScale.bandwidth()/4)
-        .attr('y', (d) => yScale(d.droughtIndex))
+        .attr('x', (d) => xScale(d.countyFull) + xScale.bandwidth()/4)
+        .attr('y', (d) => yScale(Math.max(0, d.Drought_Index)))
         .attr('width', xScale.bandwidth()/2)
-        .attr('height', (d) => Math.abs(yScale(0) - yScale(d.droughtIndex)))
+        .attr('height', (d) => Math.abs(yScale(0) - yScale(d.Drought_Index)))
         .attr('class', 'bar')
         .attr('id', (d) => `bar-${d.county}`);
+}
+
+function calcYAxis(extent){
+    if(extent[0] >= 0){
+        return [0, extent[1]]
+    } else if(extent[1] < 0){
+        return [extent[0], 0]
+    } else {
+        return extent
+    }
 }

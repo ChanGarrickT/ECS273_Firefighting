@@ -6,7 +6,7 @@ const maxYr = 2019;
 
 const yearsList = [];
 for (let y = minYr; y <= maxYr; y++){
-    yearsList.push(y)
+    yearsList.push(y.toString());
 }
 
 const monthList = [

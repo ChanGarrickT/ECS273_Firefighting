@@ -8,7 +8,7 @@ export default function WeatherData(props){
     return (
         <div className="flex flex-row h-full">
             <div className="flex flex-col w-1/5 h-full">
-                <DroughtGraph />
+                <DroughtGraph {...props}/>
                 <p className="text-xs text-center h-1rem p-1">Drought Index</p>
             </div>
             <div className="flex flex-col bg-blue-200 w-1/5 h-full">
