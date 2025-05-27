@@ -39,11 +39,11 @@ body {
 }
 
 .county-geo-incident {
-    fill: salmon;
+    fill: #f76;
 }
 
 .county-geo-incident:hover {
-    fill: lightsalmon;
+    fill: #fa6;
 }
 
 .county-choice {
@@ -58,6 +58,16 @@ body {
 .incident-list > * {
     color: white;
     border-radius: 10px;
+}
+
+.incident-list > * span {
+    transition: color 0.25s;
+    color: white;
+}
+
+.incident-list > *:hover span {
+    transition: color 0.25s;
+    color: red;
 }
 
 .bars > :nth-child(1), .incident-list > :nth-child(1){

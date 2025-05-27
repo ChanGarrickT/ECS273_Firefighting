@@ -8,7 +8,7 @@ export default function FireBarChart(props){
     const containerRef = useRef(null);
     const svgRef = useRef(null);
     
-    const weatherData = props.data;
+    const fireStats = props.data;
     
     useEffect(() => {
             if (!containerRef.current || !svgRef.current) return;
@@ -19,8 +19,8 @@ export default function FireBarChart(props){
                 for (const entry of entries) {
                     if (entry.target !== containerRef.current) continue;
                     const { width, height } = entry.contentRect;
-                    if (width && height && !isEmpty(weatherData)) {
-                        drawGraph(svgRef.current, weatherData, width, height, props.feature);
+                    if (width && height) {
+                        drawGraph(svgRef.current, fireStats, width, height, props.feature);
                     }
                 }
             }, 100) // wait at least 100 ms
@@ -35,7 +35,7 @@ export default function FireBarChart(props){
             // }
     
             return () => resizeObserver.disconnect();
-    }, [weatherData]);
+    }, [fireStats]);
 
     return (
         <div className="w-full h-[calc(100%_-_1rem)] p-1" ref={containerRef}>
@@ -48,6 +48,10 @@ export default function FireBarChart(props){
 function drawGraph(svgElement, data, width, height, feature){
     const svg = d3.select(svgElement);
     svg.selectAll('*').remove();
+
+    if(isEmpty(data)){
+        return;
+    }
 
     const yExtents = d3.extent(data.map((d) => getFeature(d, feature)));
     const xCategories = [...new Set(data.map((d) => `${d.countyName} ${d.year}${d.month}`))];

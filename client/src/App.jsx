@@ -23,8 +23,9 @@ export default function App(){
     }, []);
 
     const [selectedYearMonth, setYearMonth] = useState({year: 'None', month: 'None'})
-    const selectedYearMonthRef = useRef({year: 'None', month: 'None'});
+    const selectedYearMonthRef = useRef(selectedYearMonth);
     useEffect(() => {   
+        selectedYearMonthRef.current = selectedYearMonth;
         d3.selectAll('.county-geo').classed('county-geo-incident', false);
         if (selectedYearMonth.year !== 'None' && selectedYearMonth.month !== 'None'){
             historyData.forEach((incident) => {

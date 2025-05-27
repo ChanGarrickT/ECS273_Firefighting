@@ -24,7 +24,8 @@ export default function CaliMap(props){
                 const { width, height } = entry.contentRect;
                 if (width && height && !isEmpty(counties)) {
                     drawMap(selectorRef.current, svgRef.current, width*3/4, height, props);
-                    // highlightIncidents(props);
+                    const {year, month} = props.selectedYearMonth.current;                 
+                    highlightIncidents(props, year, month);
                 }
             }
         }, 100) // wait at least 100 ms
@@ -36,11 +37,12 @@ export default function CaliMap(props){
         const { width, height } = containerRef.current.getBoundingClientRect();
         if (width && height) {
             drawMap(selectorRef.current, svgRef.current, width*3/4, height, props);
-            // highlightIncidents(props);
+            const {year, month} = props.selectedYearMonth.current;
+            highlightIncidents(props, year, month);
         }
 
         return () => resizeObserver.disconnect();
-    }, []);
+    }, [props.selectedYearMonth]);
 
     return(
         <div className="map-container flex flex-row" ref={containerRef} style={{ width: '100%', height: '100%' }}>
@@ -175,12 +177,12 @@ function drawMap(selectorElement, svgElement, width, height, props){
     }
 }
 
-function highlightIncidents(props){
-    const {selectedYear, selectedMonth} = props.selectedYearMonth.current;
+function highlightIncidents(props, year, month){
+    if (isEmpty(props.historyData.current)) {return;}
     d3.selectAll('.county-geo').classed('county-geo-incident', false);                   
-    if (selectedYear !== 'None' && selectedMonth !== 'None'){
+    if (month !== 'None' && month !== 'None'){
         props.historyData.current.forEach((incident) => {
-            if(incident.Started === selectedYear + selectedMonth){
+            if(incident.Started === year + month){
                 d3.select(`#county-geo-${incident.County}`).classed('county-geo-incident', true);            
             }
         })
