@@ -35,7 +35,10 @@ async def get_history(year = None, month = None, county = None) -> WildfireDataM
     if year is not None:
         query['Started'] = {'$regex':f"^{year}"}
     if month is not None:
-        query['Started']['$regex'] += month
+        if 'Started' in query:
+            query['Started']['$regex'] += month + "$"
+        else: 
+            query['Started'] = {'$regex':f"{month}$"}
     if county is not None:
         query['County'] = county
     history_collection = db.get_collection("wildfire_history")
