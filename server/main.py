@@ -27,10 +27,17 @@ app.add_middleware(
 @app.get("/history/",
         response_model=list[WildfireDataModel]
     )
-async def get_history() -> WildfireDataModel:
+async def get_history(year = None, month = None, county = None) -> WildfireDataModel:
     """
     Get the historic wildfire data 
     """
+    query = {}
+    if year is not None:
+        query['Started'] = {'$regex':f"^{year}"}
+    if month is not None:
+        query['Started']['$regex'] += month
+    if county is not None:
+        query['County'] = county
     history_collection = db.get_collection("wildfire_history")
-    history_data = await history_collection.find({}).to_list(length=None)
+    history_data = await history_collection.find(query).to_list(length=None)
     return history_data
