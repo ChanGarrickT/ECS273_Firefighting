@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import { feature, mesh } from "topojson-client";
 import { useEffect, useRef, useState } from "react";
 import { isEmpty, debounce } from 'lodash';
+import { highlight, unhighlight } from "../utilities";
 import Cali from "./caCountiesTopoSimple.json"
 
 const MAX_ZOOM = 8;
@@ -9,12 +10,11 @@ const MARGIN = 20;
 
 export default function CaliMap(props){
     const containerRef = useRef(null);
-    const selectorRef = useRef(null);
     const svgRef = useRef(null);
     const counties = Cali.objects.subunits;
 
     useEffect(() => {
-        if (!containerRef.current || !selectorRef.current || !svgRef.current) return;
+        if (!containerRef.current || !svgRef.current) return;
 
         // Resize when container changes sizes
         const resizeObserver = new ResizeObserver(
@@ -23,8 +23,8 @@ export default function CaliMap(props){
                 if (entry.target !== containerRef.current) continue;
                 const { width, height } = entry.contentRect;
                 if (width && height && !isEmpty(counties)) {
-                    drawMap(selectorRef.current, svgRef.current, width*3/4, height, props);
-                    const {year, month} = props.selectedYearMonth.current;                 
+                    drawMap(svgRef.current, width, height, props);
+                    const {year, month} = props.selectedYearMonthRef.current;                 
                     highlightIncidents(props, year, month);
                 }
             }
@@ -36,31 +36,31 @@ export default function CaliMap(props){
         // Draw initially based on starting size
         const { width, height } = containerRef.current.getBoundingClientRect();
         if (width && height) {
-            drawMap(selectorRef.current, svgRef.current, width*3/4, height, props);
-            const {year, month} = props.selectedYearMonth.current;
+            drawMap(svgRef.current, width, height, props);
+            const {year, month} = props.selectedYearMonthRef.current;
             highlightIncidents(props, year, month);
         }
 
         return () => resizeObserver.disconnect();
-    }, [props.selectedYearMonth]);
+    }, [props.selectedYearMonthRef]);
 
     return(
         <div className="map-container flex flex-row" ref={containerRef} style={{ width: '100%', height: '100%' }}>
-            <svg id="map-svg" className="w-3/4" ref={svgRef} width="100%" height="100%"></svg>
-            <div id="county-selector" className="w-1/4" ref={selectorRef}></div>
+            <svg id="map-svg" className="w-full" ref={svgRef} width="100%" height="100%"></svg>
+            {/* <div id="county-selector" className="w-1/4" ref={selectorRef}></div> */}
         </div>
     )
 }
 
-function drawMap(selectorElement, svgElement, width, height, props){
+function drawMap(svgElement, width, height, props){
     const svg = d3.select(svgElement);
     svg.selectAll('*').remove();    // clear previous render
     const centerX = width / 2;
     const centerY = height / 2; 
 
     const projection = d3.geoMercator()
-        .scale(4 * height)
-        .center([-120, 37.3])         // Coords for center of Cali
+        .scale(4 * Math.min(width, height))
+        .center([-119, 37.3])         // Coords for center of Cali
         .translate([centerX, centerY]);
 
     const mapPath = d3.geoPath().projection(projection);
@@ -84,8 +84,8 @@ function drawMap(selectorElement, svgElement, width, height, props){
         .attr('stroke-width', 0.5)
         .attr('d', mapPath)
         .on('click', function(event, d){handleClick(this, d.properties.fullName, d.properties.name, props.addIncident)})
-        .on('mouseover', highlight)
-        .on('mouseout', unhighlight);
+        .on('mouseover', function(event, d) {highlight(d.properties.name)})
+        .on('mouseout', function(event, d) {unhighlight(d.properties.name)});
 
     // Draw outer outline (a === b means draw only unshared borders)
     const outerEdge = g.append('path')
@@ -114,30 +114,30 @@ function drawMap(selectorElement, svgElement, width, height, props){
 
     svg.call(zoom);
 
-    const selector = d3.select(selectorElement);
+    // const selector = d3.select(selectorElement);
     
-    selector.selectAll('*').remove();
+    // selector.selectAll('*').remove();
 
-    selector.selectAll('p')
-        .data((feature(Cali, Cali.objects.subunits).features).slice().sort((a,b) => d3.ascending(a.properties.name, b.properties.name)))
-        .join('p')
-        .text((d) => d.properties.fullName)
-        .attr('id', (d) => `county-choice-${d.properties.name}`)
-        .attr('class', 'county-choice')
-        .style('background-color', 'white')
-        // .on('click', function(event, d){zoomToCounty(event, d)})
-        .on('mouseover', highlight)
-        .on('mouseout', unhighlight);
+    // selector.selectAll('p')
+    //     .data((feature(Cali, Cali.objects.subunits).features).slice().sort((a,b) => d3.ascending(a.properties.name, b.properties.name)))
+    //     .join('p')
+    //     .text((d) => d.properties.fullName)
+    //     .attr('id', (d) => `county-choice-${d.properties.name}`)
+    //     .attr('class', 'county-choice')
+    //     .style('background-color', 'white')
+    //     // .on('click', function(event, d){zoomToCounty(event, d)})
+    //     .on('mouseover', highlight)
+    //     .on('mouseout', unhighlight);
 
-    function highlight(event, d){
-        // d3.select(`#county-geo-${d.properties.name}`).attr('fill', '#ff0');
-        d3.select(`#county-choice-${d.properties.name}`).style('background-color', '#ff0');
-    }
+    // function highlight(event, d){
+    //     // d3.select(`#county-geo-${d.properties.name}`).attr('fill', '#ff0');
+    //     d3.select(`#county-choice-${d.properties.name}`).style('background-color', '#ff0');
+    // }
 
-    function unhighlight(event, d){
-        // d3.select(`#county-geo-${d.properties.name}`).attr('fill', 'gray');
-        d3.select(`#county-choice-${d.properties.name}`).style('background-color', 'white');
-    }
+    // function unhighlight(event, d){
+    //     // d3.select(`#county-geo-${d.properties.name}`).attr('fill', 'gray');
+    //     d3.select(`#county-choice-${d.properties.name}`).style('background-color', 'white');
+    // }
         
     function zoomManual(e){
         g.attr('transform', e.transform);

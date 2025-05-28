@@ -46,10 +46,16 @@ body {
     fill: #fa6;
 }
 
+.county-incident-hover {
+    background-color: gold;
+    fill: #fa6;
+}
+
 .county-choice {
+    border-radius: 10px;
     font-size: 0.9rem;
-    padding: 3px;
-    margin: 2px;
+    padding: 3px 8px;
+    margin: 3px;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;

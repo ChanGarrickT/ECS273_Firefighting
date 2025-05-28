@@ -6,6 +6,7 @@ import IncidentLabel from "./components/incidentLabel";
 import WeatherData from "./components/weather";
 import DamageData from "./components/damages";
 import { forEach } from "lodash";
+import CountyList from "./components/countyList";
 
 export default function App(){
     const [mode, setMode] = useState('History');
@@ -37,6 +38,11 @@ export default function App(){
     }, [historyData, selectedYearMonth])
 
     const [selectedIncidents, setSelectedIncidents] = useState([]);
+    const selectedIncidentsRef = useRef(selectedIncidents);
+
+    useEffect(() => {
+        selectedIncidentsRef.current = selectedIncidents;
+    }, [selectedIncidents]);
 
     async function addIncident(input){
         try{
@@ -93,7 +99,8 @@ export default function App(){
 
     const mapProps = {
         historyData: historyDataRef,
-        selectedYearMonth: selectedYearMonthRef,
+        selectedYearMonth: selectedYearMonth,
+        selectedYearMonthRef: selectedYearMonthRef,
         selectedIncidents: selectedIncidents,
         addIncident: (incident) => addIncident(incident),
         removeIncident: (index) => removeIncident(index)
@@ -117,8 +124,13 @@ export default function App(){
                         <h3 className="text-left text-xl h-[2rem]">{mode === "History" ? "Select Year & Month, then County" : "Select County"}</h3>
                         {mode === "History" ? <TimeSelector setTime={setYearMonth}/> : null}
                     </div>
-                    <div className="border-2 border-gray-300 rounded-xl h-[calc(100%_-_2rem)]">
-                        <CaliMap {...mapProps}/>
+                    <div className="flex flew-row w-full h-[calc(100%_-_2rem)]">
+                        <div className="border-2 border-gray-300 rounded-xl w-5/7 h-full mr-2">
+                            <CaliMap {...mapProps}/>
+                        </div>
+                        <div className="border-2 border-gray-300 rounded-xl w-2/7 h-full ml-2">
+                            <CountyList {...mapProps}/>
+                        </div>
                     </div>
                 </div>
                 <div className="flex flex-col w-4/7"> {/* Data container */}
