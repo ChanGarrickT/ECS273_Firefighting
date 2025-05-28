@@ -38,28 +38,34 @@ export default function App(){
 
     const [selectedIncidents, setSelectedIncidents] = useState([]);
 
-    function addIncident(incident){
-        let data = null;
-        const history = historyDataRef.current;
-        for(let d = 0; d < history.length; d++){
-            if(history[d].Started === incident.year + incident.month && history[d].County === incident.countyName){
-                data = history[d];
-            }
+    async function addIncident(input){
+        try{
+            await fetch(`http://localhost:8000/history?year=${input.year}&month=${input.month}&county=${input.countyName}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    const incident = data[0];
+                    const incidentWithData = {
+                        ...input,
+                        AcresBurned: incident.AcresBurned,
+                        Injuries: incident.Injuries,
+                        Fatalities: incident.Fatalities,
+                        StructuresDestroyed: incident.StructuresDestroyed,
+                        StructuresDamaged: incident.StructuresDamaged,
+                        PropetyValue_Damage: incident.PropetyValue_Damage,
+                        Drought_Index: incident.Drought_Index,
+                        Precipitation: incident.Precipitation,
+                        Temperature: incident.Temperature,
+                        Heating_Degree_Days: incident.Heating_Degree_Days,
+                        Cooling_Degree_Days: incident.Cooling_Degree_Days
+                    }
+                    addIncidentHelper(incidentWithData);
+                })
+        } catch(error){
+            console.error('Error fetching: ', error);
         }
-        const incidentWithData = {
-            ...incident,
-            AcresBurned: data.AcresBurned,
-            Injuries: data.Injuries,
-            Fatalities: data.Fatalities,
-            StructuresDestroyed: data.StructuresDestroyed,
-            StructuresDamaged: data.StructuresDamaged,
-            PropetyValue_Damage: data.PropetyValue_Damage,
-            Drought_Index: data.Drought_Index,
-            Precipitation: data.Precipitation,
-            Temperature: data.Temperature,
-            Heating_Degree_Days: data.Heating_Degree_Days,
-            Cooling_Degree_Days: data.Cooling_Degree_Days
-        }
+    }
+
+    function addIncidentHelper(incident){
         setSelectedIncidents((prev) => {
             if(prev.length >= 3){
                 return prev;
@@ -69,7 +75,7 @@ export default function App(){
                     return prev;                
                 }
             }
-            return [...prev, incidentWithData];
+            return [...prev, incident];
         })
     }
 
@@ -104,8 +110,8 @@ export default function App(){
                     </select>
                 </label>
             </header>
-            <div className="flex flex-row h-3/4 w-9/10 m-auto"> {/* Main container */}
-                <div className="flex-col w-2/5 h-full p-2"> {/* Map container */}
+            <div className="flex flex-row h-3/4 w-19/20 m-auto"> {/* Main container */}
+                <div className="flex-col w-3/7 h-full p-2"> {/* Map container */}
                     {/* <h3 className="text-left text-xl h-[2rem]">Map</h3> */}
                     <div className="flex flex-row map-top align-center">
                         <h3 className="text-left text-xl h-[2rem]">{mode === "History" ? "Select Year & Month, then County" : "Select County"}</h3>
@@ -115,7 +121,7 @@ export default function App(){
                         <CaliMap {...mapProps}/>
                     </div>
                 </div>
-                <div className="flex flex-col w-3/5"> {/* Data container */}
+                <div className="flex flex-col w-4/7"> {/* Data container */}
                     <div className="incidents-container h-[2rem]">
                         <IncidentLabel {...mapProps}/>
                     </div>

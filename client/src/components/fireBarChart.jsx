@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import { useEffect, useRef, useState } from "react";
 import { isEmpty, debounce } from 'lodash';
 
-const margin = {top: 5, bottom: 8, left: 30, right: 5};
+const margin = {top: 5, bottom: 8, left: 35, right: 5};
 
 export default function FireBarChart(props){
     const containerRef = useRef(null);
@@ -76,9 +76,10 @@ function drawGraph(svgElement, data, width, height, feature){
         .attr('stroke', 'black')
         .attr('stroke-width', 1);
     
+    // Draw Y Axis
     svg.append('g')
         .attr('transform', `translate(${margin.left}, 0)`)
-        .call(d3.axisLeft(yScale).ticks(5));
+        .call(d3.axisLeft(yScale).ticks(5, getTickFormatByFeature(feature)));
 
     const bars = svg.append('g').attr('class', 'bars');
 
@@ -92,7 +93,8 @@ function drawGraph(svgElement, data, width, height, feature){
         .attr('class', 'bar')
         .attr('id', (d) => `bar-${d.county}`)
         .transition()
-        .duration(200)
+        .duration(250)
+        .ease(d3.easePolyInOut)
         .attr('y', (d) => yScale(Math.max(0, getFeature(d, feature))))
         .attr('height', (d) => Math.abs(yScale(0) - yScale(getFeature(d, feature))))
 }
@@ -110,7 +112,7 @@ function calcYAxis(extent){
 function getFeature(datum, feature){
     switch (feature){
         case 'AcresBurned':
-            return datum.AcresBurned/1000;
+            return datum.AcresBurned;
         case 'Injuries':
             return datum.Injuries;
         case 'Fatalities':
@@ -120,7 +122,7 @@ function getFeature(datum, feature){
         case 'StructuresDamaged':
             return datum.StructuresDamaged;
         case 'PropetyValue_Damage':
-            return datum.PropetyValue_Damage/1000000;
+            return datum.PropetyValue_Damage;
         case 'Drought_Index':
             return datum.Drought_Index;
         case 'Precipitation':
@@ -134,5 +136,33 @@ function getFeature(datum, feature){
         default:
             return null;
     }
-    
+}
+
+function getTickFormatByFeature(feature){
+    switch (feature){
+        case 'AcresBurned':
+            return '~s'
+        case 'Injuries':
+            return '';
+        case 'Fatalities':
+            return '';
+        case 'StructuresDestroyed':
+            return 'r';
+        case 'StructuresDamaged':
+            return 'r';
+        case 'PropetyValue_Damage':
+            return '~s';
+        case 'Drought_Index':
+            return '';
+        case 'Precipitation':
+            return '';
+        case 'Temperature':
+            return 'r';
+        case 'Heating_Degree_Days':
+            return 'r';
+        case 'Cooling_Degree_Days':
+            return 'r';
+        default:
+            return null;
+    }
 }
