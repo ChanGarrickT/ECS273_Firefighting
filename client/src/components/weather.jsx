@@ -10,11 +10,11 @@ export default function WeatherData(props){
             </div>
             <div className="flex flex-col w-1/5 h-full">
                 <FireBarChart {...props} feature="Precipitation"/>
-                <p className="text-xs text-center p-1">Precipitation</p>
+                <p className="text-xs text-center p-1">Precipitation (in.)</p>
             </div>
             <div className="flex flex-col w-1/5 h-full">
                 <FireBarChart {...props} feature="Temperature"/>
-                <p className="text-xs text-center p-1">Temperature</p>
+                <p className="text-xs text-center p-1">Temperature (ºF)</p>
             </div>
             <div className="flex flex-col w-1/5 h-full">
                 <FireBarChart {...props} feature="Heating_Degree_Days"/>

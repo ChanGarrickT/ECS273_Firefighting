@@ -26,7 +26,7 @@ export default function DamageData(props){
             </div>
             <div className="flex flex-col w-1/6 h-full">
                 <FireBarChart {...props} feature="PropetyValue_Damage"/>
-                <p className="text-xs text-center p-1">Property Damage</p>
+                <p className="text-xs text-center p-1">Property Damage ($)</p>
             </div>
         </div>
     )
