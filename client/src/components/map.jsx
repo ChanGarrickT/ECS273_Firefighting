@@ -57,8 +57,8 @@ function drawMap(svgElement, width, height, props){
     const centerY = height / 2; 
 
     const projection = d3.geoMercator()
-        .scale(4 * Math.min(width, height))
-        .center([-119, 37.3])         // Coords for center of Cali
+        .scale(5 * Math.min(width, height))
+        .center([-119.3, 37.3])         // Coords for center of Cali
         .translate([centerX, centerY]);
 
     const mapPath = d3.geoPath().projection(projection);

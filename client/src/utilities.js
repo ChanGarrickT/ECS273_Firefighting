@@ -76,6 +76,21 @@ export const monthConversion = {
     '12': 'December'
 }
 
+export const monthConversionAbr = {
+    '01': 'Jan',
+    '02': 'Feb',
+    '03': 'Mar',
+    '04': 'Apr',
+    '05': 'May',
+    '06': 'June',
+    '07': 'July',
+    '08': 'Aug',
+    '09': 'Sept',
+    '10': 'Oct',
+    '11': 'Nov',
+    '12': 'Dec'
+}
+
 export function highlight(county){
     d3.select(`#county-geo-${county}`).classed('county-incident-hover', true);
     d3.select(`#county-choice-${county}`).classed('county-incident-hover', true);

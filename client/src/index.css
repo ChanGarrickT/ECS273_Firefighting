@@ -32,6 +32,7 @@ body {
 
 .county-geo {
     fill: gray;
+    transition: fill 0.15s;
 }
 
 .county-geo:hover {
@@ -64,6 +65,7 @@ body {
     font-size: 0.9rem;
     padding: 3px 8px;
     margin: 3px;
+    transition: background-color 0.15s;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -76,6 +78,7 @@ body {
 .incident-list > * {
     color: white;
     border-radius: 10px;
+    transition: font-size 0.25s, line-height 0.25s;
 }
 
 .incident-list > * span {
@@ -101,6 +104,16 @@ body {
 .bars > :nth-child(3), .incident-list > :nth-child(3) {
     background-color: darkorange;
     fill: darkorange;
+}
+
+.bars > :nth-child(4), .incident-list > :nth-child(4) {
+    background-color: lightseagreen;
+    fill: lightseagreen;
+}
+
+.bars > :nth-child(5), .incident-list > :nth-child(5) {
+    background-color: deeppink;
+    fill: deeppink;
 }
 
 /* .county {

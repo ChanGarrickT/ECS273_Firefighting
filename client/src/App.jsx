@@ -75,7 +75,7 @@ export default function App(){
 
     function addIncidentHelper(incident){
         setSelectedIncidents((prev) => {
-            if(prev.length >= 3){
+            if(prev.length >= 5){
                 return prev;
             }
             for(let i = 0; i < prev.length; i++){
@@ -137,15 +137,15 @@ export default function App(){
                     </select>
                 </label>
             </header>
-            <div className="flex flex-row h-3/4 w-19/20 m-auto"> {/* Main container */}
-                <div className="flex-col w-3/7 h-full p-2"> {/* Map container */}
+            <div className="flex flex-row h-3/4 w-39/40 m-auto"> {/* Main container */}
+                <div className="flex-col w-3/8 h-full p-2"> {/* Left container */}
                     {/* <h3 className="text-left text-xl h-[2rem]">Map</h3> */}
-                    <div className="flex flex-row map-top align-center">
+                    <div className="flex flex-row map-top align-center"> {/* Menu container */}
                         {mode === 'History' ? <Menus.HistoryMenus {...menuProps}/> : null}
                         {/* <h3 className="text-left text-xl h-[2rem]">{mode === "History" ? "Select Year & Month, then County" : "Select County"}</h3> */}
                         {/* {mode === "History" ? <Menus.TimeSelector setTime={setYearMonth}/> : null} */}
                     </div>
-                    <div className="flex flew-row w-full h-[calc(100%_-_2rem)]">
+                    <div className="flex flew-row w-full h-[calc(100%_-_2rem)]"> {/* Map and selector container */}
                         <div className="border-2 border-gray-300 rounded-xl w-5/7 h-full mr-2">
                             <CaliMap {...mapProps}/>
                         </div>
@@ -154,7 +154,7 @@ export default function App(){
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col w-4/7"> {/* Data container */}
+                <div className="flex flex-col w-5/8"> {/* Data container */}
                     <div className="incidents-container h-[2rem]">
                         <IncidentLabel {...mapProps}/>
                     </div>
