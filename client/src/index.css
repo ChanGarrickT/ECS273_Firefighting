@@ -51,7 +51,15 @@ body {
     fill: #fa6;
 }
 
-.county-choice {
+.county-geo-selectable {
+    fill: goldenrod;
+}
+
+.county-geo-selectable:hover, .county-geo-selected {
+    fill: gold;
+}
+
+.county-choice, .time-choice {
     border-radius: 10px;
     font-size: 0.9rem;
     padding: 3px 8px;
@@ -59,6 +67,10 @@ body {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.time-choice:hover {
+    background-color: gold;
 }
 
 .incident-list > * {

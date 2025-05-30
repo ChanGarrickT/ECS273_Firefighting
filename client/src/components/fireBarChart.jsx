@@ -7,6 +7,14 @@ const margin = {top: 5, bottom: 8, left: 35, right: 5};
 export default function FireBarChart(props){
     const containerRef = useRef(null);
     const svgRef = useRef(null);
+    // useEffect(() => {
+    //     const selectedYear = props.selectedYearMonth.year;
+    //     const selectedMonth =  props.selectedYearMonth.month;
+    //     if(selectedYear === 'None' || selectedMonth === 'None'){
+    //         const element = d3.select(svgRef.current);
+    //         element.selectAll('*').remove();
+    //     }
+    // }, [props.selectedYearMonth]);
     
     const fireStats = props.data;
     

@@ -1,0 +1,99 @@
+import * as d3 from "d3";
+import { useEffect, useRef, useState } from "react";
+import { countyNameList } from "../utilities";
+
+const minYr = 2013;
+const maxYr = 2019;
+
+const yearsList = [];
+for (let y = minYr; y <= maxYr; y++){
+    yearsList.push(y.toString());
+}
+
+const monthList = [
+    {name: 'January', code: '01'},
+    {name: 'February', code: '02'},
+    {name: 'March', code: '03'},
+    {name: 'April', code: '04'},
+    {name: 'May', code: '05'},
+    {name: 'June', code: '06'},
+    {name: 'July', code: '07'},
+    {name: 'August', code: '08'},
+    {name: 'September', code: '09'},
+    {name: 'October', code: '10'},
+    {name: 'November', code: '11'},
+    {name: 'December', code: '12'},
+];
+
+export function HistoryMenus(props){
+    return (
+        <div className="h-[2rem] flex flex-row align-center">
+            <FilterSelector {...props}/>
+            {props.filter === 'YrMo' ? <TimeSelector {...props}/> : null}
+            {props.filter === 'County' ? <CountySelector {...props}/> : null}
+        </div>
+    )
+}
+
+export function FilterSelector(props){
+    function notifyChange(e){
+        props.setFilter(e.target.value);
+    }
+
+    return (
+        <div className="h-[2rem] flex flex-row align-center">
+            <label htmlFor="filter-select" className="text-l mx-2">Filter by:</label>
+            <select id="filter-select" className="flex bg-gray-100 text-black text-l p-1 rounded ml-2" onChange={notifyChange}>
+                <option value="YrMo">Year & Month</option>
+                <option value="County">County</option>
+            </select>
+        </div>
+    )
+}
+
+export function TimeSelector(props){
+    function notifyChange(){
+        const yr = d3.select('#year-selector').property('value');
+        const mo = d3.select('#month-selector').property('value');
+        props.setYearMonth({year: yr, month: mo});
+    }
+
+    useEffect(() => {
+        d3.select('#year-selector').property('value', props.selectedYearMonth.year);
+        d3.select('#month-selector').property('value', props.selectedYearMonth.month);
+    }, [props.selectedYearMonth])
+
+    return (
+        <div className="flex flex-row align-center w-1/4">
+            <select id="year-selector" className="flex bg-gray-100 text-black text-l p-1 rounded ml-8" onChange={notifyChange}>
+                <option key="0" value="None">Select Year</option>
+                {yearsList.map((y) => <option key={y} value={y}>{y}</option>)}
+            </select>
+            <select id="month-selector" className="flex bg-gray-100 text-black text-l p-1 rounded mx-2" onChange={notifyChange}>
+                <option key="00" value="None">Select Month</option>
+                {monthList.map((m) => <option key={m.code} value={m.code}>{m.name}</option>)}
+            </select>
+        </div>
+    )
+}
+
+export function CountySelector(props){
+    function notifyChange(e){
+        if(props.modeRef.current === 'History'){
+            props.setSelectedCounty(e.target.value);
+        }
+    }
+
+    useEffect(() => {
+        d3.select('#county-selector').property('value', props.selectedCounty)
+    }, [props.selectedCounty])
+
+    return (
+        <select id="county-selector" className="flex bg-gray-100 text-black text-l p-1 rounded ml-8" onChange={notifyChange}>
+            <option key="0" value="None">Select County</option>
+            {countyNameList.map((c) => <option key={c.formatted} value={c.formatted}>{c.clean}</option>)}
+        </select>
+    )
+}
+
+export default {HistoryMenus, FilterSelector, TimeSelector, CountySelector};

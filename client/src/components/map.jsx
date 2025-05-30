@@ -23,9 +23,8 @@ export default function CaliMap(props){
                 if (entry.target !== containerRef.current) continue;
                 const { width, height } = entry.contentRect;
                 if (width && height && !isEmpty(counties)) {
-                    drawMap(svgRef.current, width, height, props);
-                    const {year, month} = props.selectedYearMonthRef.current;                 
-                    highlightIncidents(props, year, month);
+                    drawMap(svgRef.current, width, height, props);                
+                    highlightIncidents(props);
                 }
             }
         }, 100) // wait at least 100 ms
@@ -37,12 +36,11 @@ export default function CaliMap(props){
         const { width, height } = containerRef.current.getBoundingClientRect();
         if (width && height) {
             drawMap(svgRef.current, width, height, props);
-            const {year, month} = props.selectedYearMonthRef.current;
-            highlightIncidents(props, year, month);
+            highlightIncidents(props);
         }
 
         return () => resizeObserver.disconnect();
-    }, [props.selectedYearMonthRef]);
+    }, [props.selectedYearMonth, props.mode, props.filter, props.selectedCounty]);
 
     return(
         <div className="map-container flex flex-row" ref={containerRef} style={{ width: '100%', height: '100%' }}>
@@ -83,7 +81,7 @@ function drawMap(svgElement, width, height, props){
         .attr('stroke', 'white')
         .attr('stroke-width', 0.5)
         .attr('d', mapPath)
-        .on('click', function(event, d){handleClick(this, d.properties.fullName, d.properties.name, props.addIncident)})
+        .on('click', function(event, d){handleClick(this, d.properties.name, props.addIncident)})
         .on('mouseover', function(event, d) {highlight(d.properties.name)})
         .on('mouseout', function(event, d) {unhighlight(d.properties.name)});
 
@@ -163,28 +161,42 @@ function drawMap(svgElement, width, height, props){
             );
     }
 
-    function handleClick(element, fullName, name, addIncident){
+    function handleClick(element, name, addIncident){
         if(d3.select(element).classed('county-geo-incident')){
-            const currentYear = d3.select('#year-selector').property('value');
-            const currentMonth =  d3.select('#month-selector').property('value');        
+            const selectedYear = props.selectedYearMonth.year;
+            const selectedMonth =  props.selectedYearMonth.month; 
             addIncident({
-                year: currentYear,
-                month: currentMonth,
-                countyFull: fullName,
+                year: selectedYear,
+                month: selectedMonth,
                 countyName: name
             });
+        } else if(d3.select(element).classed('county-geo-selectable')){
+            props.setSelectedCounty(name);
         }
     }
 }
 
-function highlightIncidents(props, year, month){
-    if (isEmpty(props.historyData.current)) {return;}
-    d3.selectAll('.county-geo').classed('county-geo-incident', false);                   
-    if (month !== 'None' && month !== 'None'){
-        props.historyData.current.forEach((incident) => {
-            if(incident.Started === year + month){
-                d3.select(`#county-geo-${incident.County}`).classed('county-geo-incident', true);            
+async function highlightIncidents(props){
+    d3.selectAll('.county-geo').classed('county-geo-incident county-geo-selected', false);                   
+
+    if(props.mode === 'History'){
+        if(props.filter === 'YrMo'){
+            const selectedYear = props.selectedYearMonth.year;
+            const selectedMonth =  props.selectedYearMonth.month; 
+            try{
+                await fetch(`http://localhost:8000/history?year=${selectedYear}&month=${selectedMonth}`)
+                    .then((res) => res.json())
+                    .then((data) => {
+                        data.forEach((d) => {
+                            d3.select(`#county-geo-${d.County}`).classed('county-geo-incident', true);
+                        })
+                    })
+            } catch(error){
+                console.error('Error fetching: ', error);
             }
-        })
+        } else if(props.filter === 'County'){
+            d3.selectAll('.county-geo').classed('county-geo-selectable', true);
+            d3.select(`#county-geo-${props.selectedCounty}`).classed('county-geo-selected', true);
+        }
     }
 }

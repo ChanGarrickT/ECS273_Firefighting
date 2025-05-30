@@ -1,64 +1,56 @@
 import * as d3 from "d3";
 import { useEffect, useState, useRef } from "react";
 import CaliMap from "./components/map";
-import TimeSelector from "./components/timeSelect";
+import Menus from "./components/menus";
 import IncidentLabel from "./components/incidentLabel";
 import WeatherData from "./components/weather";
 import DamageData from "./components/damages";
 import { forEach } from "lodash";
-import CountyList from "./components/countyList";
+import ChoicesList from "./components/choicesList";
 import PredictionForm from "./components/predictionForm";
 
 export default function App(){
     const [mode, setMode] = useState('History');
     const modeRef = useRef(mode);
-
     useEffect(() => {    
         modeRef.current = mode;
         d3.selectAll('.county-geo').classed('county-geo-incident', false);
         d3.selectAll('.county-choice').remove();
+        setYearMonth({year: 'None', month: 'None'});
+        setSelectedCounty('None');
         setSelectedIncidents([]);
-    }, [mode]);
-    
+    }, [mode]);   
     const changeMode = (e) => setMode(e.target.value);
 
-    const [historyData, setHistoryData] = useState([]);
-    const historyDataRef = useRef([]);
+    const [filter, setFilter] = useState('YrMo');
+    const filterRef = useRef(filter);
     useEffect(() => {
-        fetch("http://localhost:8000/history")
-            .then((res) => res.json())
-            .then((data) => {
-                setHistoryData(data);
-                historyDataRef.current = data;
-            });
-    }, []);
+        filterRef.current = filter;
+    }, [filter]);
 
     const [selectedYearMonth, setYearMonth] = useState({year: 'None', month: 'None'})
     const selectedYearMonthRef = useRef(selectedYearMonth);
-    useEffect(() => {   
+    useEffect(() => {
         selectedYearMonthRef.current = selectedYearMonth;
-        d3.selectAll('.county-geo').classed('county-geo-incident', false);
-        if (selectedYearMonth.year !== 'None' && selectedYearMonth.month !== 'None'){
-            historyData.forEach((incident) => {
-                if(incident.Started === selectedYearMonth.year + selectedYearMonth.month){
-                    d3.select(`#county-geo-${incident.County}`).classed('county-geo-incident', true);            
-                }
-            })
-        }
-    }, [historyData, selectedYearMonth])
+    }, [selectedYearMonth]);
 
     const [selectedIncidents, setSelectedIncidents] = useState([]);
     const selectedIncidentsRef = useRef(selectedIncidents);
-
     useEffect(() => {
         selectedIncidentsRef.current = selectedIncidents;
     }, [selectedIncidents]);
+
+    const [selectedCounty, setSelectedCounty] = useState('None');
+    const selectedCountyRef = useRef(selectedCounty);
+    useEffect(() => {
+        selectedCountyRef.current = selectedCounty;
+    }, [selectedCounty]);
 
     async function addIncident(input){
         try{
             await fetch(`http://localhost:8000/history?year=${input.year}&month=${input.month}&county=${input.countyName}`)
                 .then((res) => res.json())
-                .then((data) => {
+                .then((data) => {            
                     const incident = data[0];
                     const incidentWithData = {
                         ...input,
@@ -107,11 +99,29 @@ export default function App(){
         })
     }
 
+    const menuProps = {
+        mode: mode,
+        modeRef: modeRef,
+        filter: filter,
+        filterRef: filterRef,
+        selectedYearMonth: selectedYearMonth,
+        selectedCounty: selectedCounty,
+        setFilter: setFilter,
+        setYearMonth: setYearMonth,
+        setSelectedCounty: setSelectedCounty
+    }
+
     const mapProps = {
-        historyData: historyDataRef,
+        mode: mode,
+        modeRef: modeRef,
+        filter: filter,
+        filterRef: filterRef,
         selectedYearMonth: selectedYearMonth,
         selectedYearMonthRef: selectedYearMonthRef,
+        selectedCounty: selectedCounty,
+        selectedCountyRef: selectedCountyRef,
         selectedIncidents: selectedIncidents,
+        setSelectedCounty: setSelectedCounty,
         addIncident: (incident) => addIncident(incident),
         removeIncident: (index) => removeIncident(index)
     };
@@ -131,15 +141,16 @@ export default function App(){
                 <div className="flex-col w-3/7 h-full p-2"> {/* Map container */}
                     {/* <h3 className="text-left text-xl h-[2rem]">Map</h3> */}
                     <div className="flex flex-row map-top align-center">
-                        <h3 className="text-left text-xl h-[2rem]">{mode === "History" ? "Select Year & Month, then County" : "Select County"}</h3>
-                        {mode === "History" ? <TimeSelector setTime={setYearMonth}/> : null}
+                        {mode === 'History' ? <Menus.HistoryMenus {...menuProps}/> : null}
+                        {/* <h3 className="text-left text-xl h-[2rem]">{mode === "History" ? "Select Year & Month, then County" : "Select County"}</h3> */}
+                        {/* {mode === "History" ? <Menus.TimeSelector setTime={setYearMonth}/> : null} */}
                     </div>
                     <div className="flex flew-row w-full h-[calc(100%_-_2rem)]">
                         <div className="border-2 border-gray-300 rounded-xl w-5/7 h-full mr-2">
                             <CaliMap {...mapProps}/>
                         </div>
                         <div className="border-2 border-gray-300 rounded-xl w-2/7 h-full ml-2">
-                            <CountyList {...mapProps}/>
+                            <ChoicesList {...mapProps}/>
                         </div>
                     </div>
                 </div>
@@ -149,12 +160,12 @@ export default function App(){
                     </div>
                     <div className="h-[calc(50%_-_1rem)] p-2">
                         <div className="border-2 border-gray-300 rounded-xl h-full">
-                            {mode === 'History' ? <WeatherData data={selectedIncidents}/> : <PredictionForm />}
+                            {mode === 'History' ? <WeatherData {...mapProps} data={selectedIncidents}/> : <PredictionForm />}
                         </div>
                     </div>
                     <div className="h-[calc(50%_-_1rem)] p-2">
                         <div className="border-2 border-gray-300 rounded-xl h-full">
-                            <DamageData data={selectedIncidents}/>
+                            <DamageData {...mapProps} data={selectedIncidents}/>
                         </div>
                     </div>
                 </div>
