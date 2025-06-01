@@ -151,7 +151,7 @@ export default function App(){
                 <div className="flex-col w-3/8 h-full p-2"> {/* Left container */}
                     {/* <h3 className="text-left text-xl h-[2rem]">Map</h3> */}
                     <div className="flex flex-row map-top align-center"> {/* Menu container */}
-                        {mode === 'History' ? <Menus.HistoryMenus {...menuProps}/> : null}
+                        {mode === 'History' ? <Menus.HistoryMenus {...menuProps}/> : <div className="h-[2rem]"></div>}
                         {/* <h3 className="text-left text-xl h-[2rem]">{mode === "History" ? "Select Year & Month, then County" : "Select County"}</h3> */}
                         {/* {mode === "History" ? <Menus.TimeSelector setTime={setYearMonth}/> : null} */}
                     </div>
@@ -169,9 +169,9 @@ export default function App(){
                         <IncidentLabel {...labelProps}/>
                     </div>
                     <div className="h-[calc(50%_-_1rem)] p-2">
-                        <div className="border-2 border-gray-300 rounded-xl h-full">
+                        {/* <div className="border-2 border-gray-300 rounded-xl h-full"> */}
                             {mode === 'History' ? <WeatherData data={selectedIncidents}/> : <PredictionForm />}
-                        </div>
+                        {/* </div> */}
                     </div>
                     <div className="h-[calc(50%_-_1rem)] p-2">
                         <div className="border-2 border-gray-300 rounded-xl h-full">
