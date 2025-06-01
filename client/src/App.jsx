@@ -5,47 +5,54 @@ import Menus from "./components/menus";
 import IncidentLabel from "./components/incidentLabel";
 import WeatherData from "./components/weather";
 import DamageData from "./components/damages";
-import { forEach } from "lodash";
 import ChoicesList from "./components/choicesList";
 import PredictionForm from "./components/predictionForm";
 
+const MAX_INCIDENTS = 5;
+
 export default function App(){
+    // Track the view mode
     const [mode, setMode] = useState('History');
     const modeRef = useRef(mode);
+    // Reset settings for history mode when the mode is changed
     useEffect(() => {    
         modeRef.current = mode;
-        d3.selectAll('.county-geo').classed('county-geo-incident', false);
-        d3.selectAll('.county-choice').remove();
         setYearMonth({year: 'None', month: 'None'});
+        setFilter('YrMo');
         setSelectedCounty('None');
         setSelectedIncidents([]);
     }, [mode]);   
     const changeMode = (e) => setMode(e.target.value);
 
+    // Track the filter mode
     const [filter, setFilter] = useState('YrMo');
     const filterRef = useRef(filter);
     useEffect(() => {
         filterRef.current = filter;
     }, [filter]);
 
+    // Track the selected year and month
     const [selectedYearMonth, setYearMonth] = useState({year: 'None', month: 'None'})
     const selectedYearMonthRef = useRef(selectedYearMonth);
     useEffect(() => {
         selectedYearMonthRef.current = selectedYearMonth;
     }, [selectedYearMonth]);
 
+    // Track the selected incidents
     const [selectedIncidents, setSelectedIncidents] = useState([]);
     const selectedIncidentsRef = useRef(selectedIncidents);
     useEffect(() => {
         selectedIncidentsRef.current = selectedIncidents;
     }, [selectedIncidents]);
 
+    // Track the selected county
     const [selectedCounty, setSelectedCounty] = useState('None');
     const selectedCountyRef = useRef(selectedCounty);
     useEffect(() => {
         selectedCountyRef.current = selectedCounty;
     }, [selectedCounty]);
 
+    // Add an incident to compare
     async function addIncident(input){
         try{
             await fetch(`http://localhost:8000/history?year=${input.year}&month=${input.month}&county=${input.countyName}`)
@@ -73,9 +80,10 @@ export default function App(){
         }
     }
 
+    // Set state of incident list; this can't be done in the same function as fetching
     function addIncidentHelper(incident){
         setSelectedIncidents((prev) => {
-            if(prev.length >= 5){
+            if(prev.length >= MAX_INCIDENTS){
                 return prev;
             }
             for(let i = 0; i < prev.length; i++){
@@ -87,6 +95,7 @@ export default function App(){
         })
     }
 
+    // Remove an incident from tracking
     function removeIncident(index){
         setSelectedIncidents((prev) => {
             if(index >= 0 && index <= prev.length){
@@ -99,11 +108,11 @@ export default function App(){
         })
     }
 
+    // Variables and functions to pass to menus
     const menuProps = {
         mode: mode,
         modeRef: modeRef,
         filter: filter,
-        filterRef: filterRef,
         selectedYearMonth: selectedYearMonth,
         selectedCounty: selectedCounty,
         setFilter: setFilter,
@@ -111,19 +120,20 @@ export default function App(){
         setSelectedCounty: setSelectedCounty
     }
 
+    // Variables and functions to pass to the map and selector column
     const mapProps = {
         mode: mode,
-        modeRef: modeRef,
         filter: filter,
-        filterRef: filterRef,
         selectedYearMonth: selectedYearMonth,
-        selectedYearMonthRef: selectedYearMonthRef,
         selectedCounty: selectedCounty,
-        selectedCountyRef: selectedCountyRef,
-        selectedIncidents: selectedIncidents,
         setSelectedCounty: setSelectedCounty,
-        addIncident: (incident) => addIncident(incident),
-        removeIncident: (index) => removeIncident(index)
+        addIncident: (incident) => addIncident(incident)
+    };
+
+    // Variables and functions to pass to the incident labels
+    const labelProps = {
+        selectedIncidents: selectedIncidents,
+        removeIncident: removeIncident
     };
 
     return(
@@ -156,16 +166,16 @@ export default function App(){
                 </div>
                 <div className="flex flex-col w-5/8"> {/* Data container */}
                     <div className="incidents-container h-[2rem]">
-                        <IncidentLabel {...mapProps}/>
+                        <IncidentLabel {...labelProps}/>
                     </div>
                     <div className="h-[calc(50%_-_1rem)] p-2">
                         <div className="border-2 border-gray-300 rounded-xl h-full">
-                            {mode === 'History' ? <WeatherData {...mapProps} data={selectedIncidents}/> : <PredictionForm />}
+                            {mode === 'History' ? <WeatherData data={selectedIncidents}/> : <PredictionForm />}
                         </div>
                     </div>
                     <div className="h-[calc(50%_-_1rem)] p-2">
                         <div className="border-2 border-gray-300 rounded-xl h-full">
-                            <DamageData {...mapProps} data={selectedIncidents}/>
+                            <DamageData data={selectedIncidents}/>
                         </div>
                     </div>
                 </div>

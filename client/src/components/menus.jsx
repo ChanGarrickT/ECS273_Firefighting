@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { countyNameList } from "../utilities";
 
 const minYr = 2013;
@@ -25,6 +25,7 @@ const monthList = [
     {name: 'December', code: '12'},
 ];
 
+// Root component for menus
 export function HistoryMenus(props){
     return (
         <div className="h-[2rem] flex flex-row align-center">
@@ -35,6 +36,7 @@ export function HistoryMenus(props){
     )
 }
 
+// Dropdown for selecting filter
 export function FilterSelector(props){
     function notifyChange(e){
         props.setFilter(e.target.value);
@@ -51,13 +53,15 @@ export function FilterSelector(props){
     )
 }
 
+// Dropdown for selecting year and month
 export function TimeSelector(props){
+    // Immediately save changes user makes
     function notifyChange(){
         const yr = d3.select('#year-selector').property('value');
         const mo = d3.select('#month-selector').property('value');
         props.setYearMonth({year: yr, month: mo});
     }
-
+  
     useEffect(() => {
         d3.select('#year-selector').property('value', props.selectedYearMonth.year);
         d3.select('#month-selector').property('value', props.selectedYearMonth.month);
@@ -77,13 +81,16 @@ export function TimeSelector(props){
     )
 }
 
+// Dropdown for county selection
 export function CountySelector(props){
+    // Immediately save changes user makes
     function notifyChange(e){
         if(props.modeRef.current === 'History'){
             props.setSelectedCounty(e.target.value);
         }
     }
 
+    // Change the dropdown value if county selection is changed elsewhere (e.g. clicking the map)
     useEffect(() => {
         d3.select('#county-selector').property('value', props.selectedCounty)
     }, [props.selectedCounty])

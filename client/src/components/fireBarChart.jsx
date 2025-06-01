@@ -7,14 +7,6 @@ const margin = {top: 5, bottom: 8, left: 35, right: 5};
 export default function FireBarChart(props){
     const containerRef = useRef(null);
     const svgRef = useRef(null);
-    // useEffect(() => {
-    //     const selectedYear = props.selectedYearMonth.year;
-    //     const selectedMonth =  props.selectedYearMonth.month;
-    //     if(selectedYear === 'None' || selectedMonth === 'None'){
-    //         const element = d3.select(svgRef.current);
-    //         element.selectAll('*').remove();
-    //     }
-    // }, [props.selectedYearMonth]);
     
     const fireStats = props.data;
     
@@ -35,12 +27,6 @@ export default function FireBarChart(props){
             );
     
             resizeObserver.observe(containerRef.current);
-    
-            // Draw initially based on starting size
-            // const { width, height } = containerRef.current.getBoundingClientRect();
-            // if (width && height) {
-            //     drawGraph(svgRef.current, weatherData, width, height);
-            // }
     
             return () => resizeObserver.disconnect();
     }, [fireStats]);
@@ -73,9 +59,6 @@ function drawGraph(svgElement, data, width, height, feature){
         .domain(calcYAxis(yExtents))
         .nice();
 
-    // svg.append('g')
-    //     .attr('transform', `translate(0, ${yScale(0)})`)
-    //     .call(d3.axisBottom(xScale).ticks(0));
     svg.append('line')
         .attr('x1', margin.left)
         .attr('y1', yScale(0)+0.5)

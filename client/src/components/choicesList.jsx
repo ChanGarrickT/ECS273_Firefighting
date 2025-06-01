@@ -1,10 +1,12 @@
 import * as d3 from "d3";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { countyNameList, monthConversion, highlight, unhighlight} from "../utilities";
 
+// The component allowing selections to be made by clicking text instead of the map
 export default function ChoicesList(props){
     const containerRef = useRef(null);
 
+    // Respond to changes in filters and filter mode
     useEffect(() => {
         if(props.filter === 'YrMo'){
             addNames(containerRef.current, props)
@@ -14,15 +16,16 @@ export default function ChoicesList(props){
     }, [props.selectedYearMonth, props.selectedCounty, props.filter])
 
     return (
-        <div className="h-full" ref={containerRef} style={{overflowY: "scroll"}}>
-            
-        </div>
+        <div className="h-full" ref={containerRef} style={{overflowY: "scroll"}}></div>
     )
 }
 
+// Populate the list with county names
 function addNames(divElement, props){
+    // Clear the list first
     const container = d3.select(divElement);
     container.selectAll('*').remove();
+
     try{
         fetch(`http://localhost:8000/history?year=${props.selectedYearMonth.year}&month=${props.selectedYearMonth.month}`)
             .then((res) => res.json())
@@ -49,9 +52,12 @@ function addNames(divElement, props){
     }
 }
 
+// Populate the list with months
 function addTimes(divElement, props){
+    // Clear the list first
     const container = d3.select(divElement);
     container.selectAll('*').remove();
+
     try{
         fetch(`http://localhost:8000/history?county=${props.selectedCounty}`)
             .then((res) => res.json())

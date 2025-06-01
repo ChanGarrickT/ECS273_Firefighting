@@ -1,12 +1,11 @@
 import * as d3 from "d3";
 import { feature, mesh } from "topojson-client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { isEmpty, debounce } from 'lodash';
 import { highlight, unhighlight } from "../utilities";
 import Cali from "./caCountiesTopoSimple.json"
 
 const MAX_ZOOM = 8;
-const MARGIN = 20;
 
 export default function CaliMap(props){
     const containerRef = useRef(null);
@@ -45,7 +44,6 @@ export default function CaliMap(props){
     return(
         <div className="map-container flex flex-row" ref={containerRef} style={{ width: '100%', height: '100%' }}>
             <svg id="map-svg" className="w-full" ref={svgRef} width="100%" height="100%"></svg>
-            {/* <div id="county-selector" className="w-1/4" ref={selectorRef}></div> */}
         </div>
     )
 }
@@ -64,11 +62,6 @@ function drawMap(svgElement, width, height, props){
     const mapPath = d3.geoPath().projection(projection);
     
     const g = svg.append('g');
-
-    // Draw base layer
-    // g.append('path')
-    //     .datum(feature(Cali, Cali.objects.subunits))
-    //     .attr('d', mapPath);
     
     // County features
     const counties = g.append('g')
@@ -111,31 +104,6 @@ function drawMap(svgElement, width, height, props){
     });
 
     svg.call(zoom);
-
-    // const selector = d3.select(selectorElement);
-    
-    // selector.selectAll('*').remove();
-
-    // selector.selectAll('p')
-    //     .data((feature(Cali, Cali.objects.subunits).features).slice().sort((a,b) => d3.ascending(a.properties.name, b.properties.name)))
-    //     .join('p')
-    //     .text((d) => d.properties.fullName)
-    //     .attr('id', (d) => `county-choice-${d.properties.name}`)
-    //     .attr('class', 'county-choice')
-    //     .style('background-color', 'white')
-    //     // .on('click', function(event, d){zoomToCounty(event, d)})
-    //     .on('mouseover', highlight)
-    //     .on('mouseout', unhighlight);
-
-    // function highlight(event, d){
-    //     // d3.select(`#county-geo-${d.properties.name}`).attr('fill', '#ff0');
-    //     d3.select(`#county-choice-${d.properties.name}`).style('background-color', '#ff0');
-    // }
-
-    // function unhighlight(event, d){
-    //     // d3.select(`#county-geo-${d.properties.name}`).attr('fill', 'gray');
-    //     d3.select(`#county-choice-${d.properties.name}`).style('background-color', 'white');
-    // }
         
     function zoomManual(e){
         g.attr('transform', e.transform);
@@ -143,6 +111,7 @@ function drawMap(svgElement, width, height, props){
         outerEdge.attr('stroke-width', 1 / e.transform.k); 
     }
 
+    // Scrapped feature
     function zoomToCounty(event, d){
         // Do something in parent component
         // props.getCurrentCounty(d.properties.fullName);
@@ -162,6 +131,7 @@ function drawMap(svgElement, width, height, props){
     }
 
     function handleClick(element, name, addIncident){
+        // If filtering by time, only highlighted counties should respond to clicks
         if(d3.select(element).classed('county-geo-incident')){
             const selectedYear = props.selectedYearMonth.year;
             const selectedMonth =  props.selectedYearMonth.month; 
@@ -170,6 +140,7 @@ function drawMap(svgElement, width, height, props){
                 month: selectedMonth,
                 countyName: name
             });
+        // If filtering by county, all counties are clickable
         } else if(d3.select(element).classed('county-geo-selectable')){
             props.setSelectedCounty(name);
         }
@@ -180,6 +151,7 @@ async function highlightIncidents(props){
     d3.selectAll('.county-geo').classed('county-geo-incident county-geo-selected', false);                   
 
     if(props.mode === 'History'){
+        // If filtering by time, highlight only counties with incidents in the selected time
         if(props.filter === 'YrMo'){
             const selectedYear = props.selectedYearMonth.year;
             const selectedMonth =  props.selectedYearMonth.month; 
@@ -194,6 +166,7 @@ async function highlightIncidents(props){
             } catch(error){
                 console.error('Error fetching: ', error);
             }
+        // If filtering by county, all counties should be highlighted; keep selected county super highlighted
         } else if(props.filter === 'County'){
             d3.selectAll('.county-geo').classed('county-geo-selectable', true);
             d3.select(`#county-geo-${props.selectedCounty}`).classed('county-geo-selected', true);

@@ -1,8 +1,10 @@
 import * as d3 from "d3";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { countyNameList, monthConversionAbr } from "../utilities";
 
+// The colored labels serving as a legend for the bar charts
 export default function IncidentLabel(props){
+    // If there are more than 3 selections, shrink text to fit more on screen
     useEffect(() => {
         if(props.selectedIncidents.length <= 3){
             d3.select('#incident-label-container').classed('text-xs', false).classed('text-s', true);
