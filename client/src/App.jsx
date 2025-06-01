@@ -11,6 +11,25 @@ import PredictionForm from "./components/predictionForm";
 const MAX_INCIDENTS = 5;
 
 export default function App(){
+    let input = {
+        fires: 100,
+        temperature: 100,
+        precipitation: 100,
+        PSDI: 100,
+    }
+    
+    fetch("http://localhost:8000/predict/", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(input)
+    }).then((res) => res.json())
+    .then((data) => {
+        console.log(data)
+        console.log(data.predictions)
+    })
+
     // Track the view mode
     const [mode, setMode] = useState('History');
     const modeRef = useRef(mode);
@@ -51,6 +70,8 @@ export default function App(){
     useEffect(() => {
         selectedCountyRef.current = selectedCounty;
     }, [selectedCounty]);
+
+
 
     // Add an incident to compare
     async function addIncident(input){
