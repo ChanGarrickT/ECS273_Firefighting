@@ -8,12 +8,16 @@ export default function ChoicesList(props){
 
     // Respond to changes in filters and filter mode
     useEffect(() => {
-        if(props.filter === 'YrMo'){
-            addNames(containerRef.current, props)
-        } else if(props.filter === 'County'){
-            addTimes(containerRef.current, props)
+        if(props.mode === "History"){
+            if(props.filter === 'YrMo'){
+                addNames(containerRef.current, props);
+            } else if(props.filter === 'County'){
+                addTimes(containerRef.current, props);
+            }
+        } else {
+            addNames(containerRef.current, props);
         }
-    }, [props.selectedYearMonth, props.selectedCounty, props.filter])
+    }, [props.selectedYearMonth, props.selectedCounty, props.filter, props.mode])
 
     return (
         <div className="h-full" ref={containerRef} style={{overflowY: "scroll"}}></div>
@@ -25,30 +29,41 @@ function addNames(divElement, props){
     // Clear the list first
     const container = d3.select(divElement);
     container.selectAll('*').remove();
-
-    try{
-        fetch(`http://localhost:8000/history?year=${props.selectedYearMonth.year}&month=${props.selectedYearMonth.month}`)
-            .then((res) => res.json())
-            .then((data) => {
-                for(let c = 0; c < countyNameList.length; c++){
-                    for(let i = 0; i < data.length; i++){
-                        if(countyNameList[c].formatted === data[i].County){
-                            let payload = {...props};
-                            payload.selectedCounty = data[i].County;     
-                            container.append('p')
-                                .attr('id', `county-choice-${data[i].County}`)
-                                .attr('class', 'county-choice')
-                                .text(countyNameList[c].clean)
-                                .on('click', function(event) {handleClick(payload)})
-                                .on('mouseover', () => highlight(data[i].County))
-                                .on('mouseout', () => unhighlight(data[i].County));
+    if(props.mode === "History"){
+        try{
+            fetch(`http://localhost:8000/history?year=${props.selectedYearMonth.year}&month=${props.selectedYearMonth.month}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    for(let c = 0; c < countyNameList.length; c++){
+                        for(let i = 0; i < data.length; i++){
+                            if(countyNameList[c].formatted === data[i].County){
+                                let payload = {...props};
+                                payload.selectedCounty = data[i].County;     
+                                container.append('p')
+                                    .attr('id', `county-choice-${data[i].County}`)
+                                    .attr('class', 'county-choice')
+                                    .text(countyNameList[c].clean)
+                                    .on('click', function(event) {handleClick(payload)})
+                                    .on('mouseover', () => highlight(data[i].County, props.mode))
+                                    .on('mouseout', () => unhighlight(data[i].County));
+                            }
                         }
                     }
-                }
-            })
-    } catch(error){
-        console.error('Error fetching: ', error);
-        
+                })
+        } catch(error){
+            console.error('Error fetching: ', error);
+            
+        }
+    } else {
+        countyNameList.forEach((c) => {
+            container.append('p')
+                .attr('id', `county-choice-${c.formatted}`)
+                .attr('class', 'county-choice')
+                .text(c.clean)
+                .on('click', function(event) {props.addPrediction(c.formatted)})
+                .on('mouseover', () => highlight(c.formatted, props.mode))
+                .on('mouseout', () => unhighlight(c.formatted));
+        })
     }
 }
 
@@ -84,6 +99,6 @@ function handleClick(props){
     props.addIncident({
         year: props.selectedYearMonth.year,
         month: props.selectedYearMonth.month,
-        countyName: props.selectedCounty
+        County: props.selectedCounty
     });
 }

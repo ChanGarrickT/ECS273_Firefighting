@@ -29,7 +29,7 @@ export default function FireBarChart(props){
             resizeObserver.observe(containerRef.current);
     
             return () => resizeObserver.disconnect();
-    }, [fireStats]);
+    }, [fireStats, props.predictions]);
 
     return (
         <div className="w-full h-[calc(100%_-_1rem)] p-1" ref={containerRef}>
@@ -48,7 +48,7 @@ function drawGraph(svgElement, data, width, height, feature){
     }
 
     const yExtents = d3.extent(data.map((d) => getFeature(d, feature)));
-    const xCategories = [...new Set(data.map((d) => `${d.countyName} ${d.year}${d.month}`))];
+    const xCategories = [...new Set(data.map((d) => `${d.County} ${d.year}${d.month}`))];
 
     const xScale = d3.scaleBand()
         .rangeRound([margin.left, width - margin.right])
@@ -77,12 +77,12 @@ function drawGraph(svgElement, data, width, height, feature){
     bars.selectAll('rect')
         .data(data)
         .join('rect')
-        .attr('x', (d) => xScale(`${d.countyName} ${d.year}${d.month}`) + xScale.bandwidth()/10)
+        .attr('x', (d) => xScale(`${d.County} ${d.year}${d.month}`) + xScale.bandwidth()/10)
         .attr('y', yScale(0))
         .attr('width', xScale.bandwidth()/1.25)
         .attr('height', 0)
         .attr('class', 'bar')
-        .attr('id', (d) => `bar-${d.county}`)
+        .attr('id', (d) => `bar-${d.County}`)
         .transition()
         .duration(250)
         .ease(d3.easePolyInOut)
@@ -124,6 +124,8 @@ function getFeature(datum, feature){
             return datum.Heating_Degree_Days;
         case 'Cooling_Degree_Days':
             return datum.Cooling_Degree_Days;
+        case 'Fires':      
+            return datum.Fires;
         default:
             return null;
     }
@@ -153,6 +155,8 @@ function getTickFormatByFeature(feature){
             return 'r';
         case 'Cooling_Degree_Days':
             return 'r';
+        case 'Fires':
+            return '';
         default:
             return null;
     }

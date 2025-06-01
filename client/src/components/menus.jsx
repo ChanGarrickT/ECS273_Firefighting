@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { useEffect } from "react";
 import { countyNameList } from "../utilities";
+import { monthList } from "../utilities";
 
 const minYr = 2013;
 const maxYr = 2019;
@@ -9,21 +10,6 @@ const yearsList = [];
 for (let y = minYr; y <= maxYr; y++){
     yearsList.push(y.toString());
 }
-
-const monthList = [
-    {name: 'January', code: '01'},
-    {name: 'February', code: '02'},
-    {name: 'March', code: '03'},
-    {name: 'April', code: '04'},
-    {name: 'May', code: '05'},
-    {name: 'June', code: '06'},
-    {name: 'July', code: '07'},
-    {name: 'August', code: '08'},
-    {name: 'September', code: '09'},
-    {name: 'October', code: '10'},
-    {name: 'November', code: '11'},
-    {name: 'December', code: '12'},
-];
 
 // Root component for menus
 export function HistoryMenus(props){

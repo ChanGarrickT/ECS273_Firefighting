@@ -52,8 +52,13 @@ body {
     fill: #fa6;
 }
 
-.county-geo-selectable {
+.county-geo-selectable, .county-predict {
     fill: goldenrod;
+}
+
+.county-predict-hover, .county-predict-hover:hover {
+    fill: gold;
+    background-color: gold;
 }
 
 .county-geo-selectable:hover, .county-geo-selected {
@@ -116,13 +121,10 @@ body {
     fill: deeppink;
 }
 
-/* .county {
-    fill: gray;
-    stroke: white;
-    stroke-width: 0.5;
+#submit-button {
+    transition: background-color 0.2s;
 }
 
-.outerEdge {
-    fill: none;
-    stroke: black;
-} */
+#submit-button:hover {
+    background-color: #0a0;
+}

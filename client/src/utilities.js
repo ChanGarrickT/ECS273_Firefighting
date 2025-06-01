@@ -61,6 +61,21 @@ export const countyNameList = [
         {clean: "Yuba", formatted: "Yuba"}
 ]
 
+export const monthList = [
+    {name: 'January', code: '01'},
+    {name: 'February', code: '02'},
+    {name: 'March', code: '03'},
+    {name: 'April', code: '04'},
+    {name: 'May', code: '05'},
+    {name: 'June', code: '06'},
+    {name: 'July', code: '07'},
+    {name: 'August', code: '08'},
+    {name: 'September', code: '09'},
+    {name: 'October', code: '10'},
+    {name: 'November', code: '11'},
+    {name: 'December', code: '12'},
+];
+
 export const monthConversion = {
     '01': 'January',
     '02': 'February',
@@ -91,12 +106,17 @@ export const monthConversionAbr = {
     '12': 'Dec'
 }
 
-export function highlight(county){
-    d3.select(`#county-geo-${county}`).classed('county-incident-hover', true);
-    d3.select(`#county-choice-${county}`).classed('county-incident-hover', true);
+export function highlight(county, mode){
+    if(mode === "History"){
+        d3.select(`#county-geo-${county}`).classed('county-incident-hover', true);
+        d3.select(`#county-choice-${county}`).classed('county-incident-hover', true);
+    } else {
+        d3.select(`#county-geo-${county}`).classed('county-predict-hover', true);
+        d3.select(`#county-choice-${county}`).classed('county-predict-hover', true);
+    }
 }
 
 export function unhighlight(county){
-    d3.select(`#county-geo-${county}`).classed('county-incident-hover', false);
-    d3.select(`#county-choice-${county}`).classed('county-incident-hover', false);
+    d3.select(`#county-geo-${county}`).classed('county-incident-hover county-predict-hover', false);
+    d3.select(`#county-choice-${county}`).classed('county-incident-hover county-predict-hover', false);
 }

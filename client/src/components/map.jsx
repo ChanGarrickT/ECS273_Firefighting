@@ -55,7 +55,7 @@ function drawMap(svgElement, width, height, props){
     const centerY = height / 2; 
 
     const projection = d3.geoMercator()
-        .scale(5 * Math.min(width, height))
+        .scale(4.5 * Math.min(width, height))
         .center([-119.3, 37.3])         // Coords for center of Cali
         .translate([centerX, centerY]);
 
@@ -74,8 +74,8 @@ function drawMap(svgElement, width, height, props){
         .attr('stroke', 'white')
         .attr('stroke-width', 0.5)
         .attr('d', mapPath)
-        .on('click', function(event, d){handleClick(this, d.properties.name, props.addIncident)})
-        .on('mouseover', function(event, d) {highlight(d.properties.name)})
+        .on('click', function(event, d){handleClick(this, d.properties.name)})
+        .on('mouseover', function(event, d) {highlight(d.properties.name, props.mode)})
         .on('mouseout', function(event, d) {unhighlight(d.properties.name)});
 
     // Draw outer outline (a === b means draw only unshared borders)
@@ -130,25 +130,29 @@ function drawMap(svgElement, width, height, props){
             );
     }
 
-    function handleClick(element, name, addIncident){
-        // If filtering by time, only highlighted counties should respond to clicks
-        if(d3.select(element).classed('county-geo-incident')){
-            const selectedYear = props.selectedYearMonth.year;
-            const selectedMonth =  props.selectedYearMonth.month; 
-            addIncident({
-                year: selectedYear,
-                month: selectedMonth,
-                countyName: name
-            });
-        // If filtering by county, all counties are clickable
-        } else if(d3.select(element).classed('county-geo-selectable')){
-            props.setSelectedCounty(name);
+    function handleClick(element, name){
+        if(props.mode === "History"){
+            // If filtering by time, only highlighted counties should respond to clicks
+            if(d3.select(element).classed('county-geo-incident')){
+                const selectedYear = props.selectedYearMonth.year;
+                const selectedMonth =  props.selectedYearMonth.month; 
+                props.addIncident({
+                    year: selectedYear,
+                    month: selectedMonth,
+                    County: name
+                });
+            // If filtering by county, all counties are clickable
+            } else if(d3.select(element).classed('county-geo-selectable')){
+                props.setSelectedCounty(name);
+            }
+        } else {
+            props.addPrediction(name);
         }
     }
 }
 
 async function highlightIncidents(props){
-    d3.selectAll('.county-geo').classed('county-geo-incident county-geo-selected', false);                   
+    d3.selectAll('.county-geo').classed('county-geo-incident county-geo-selected county-geo-predict', false);                   
 
     if(props.mode === 'History'){
         // If filtering by time, highlight only counties with incidents in the selected time
@@ -171,5 +175,8 @@ async function highlightIncidents(props){
             d3.selectAll('.county-geo').classed('county-geo-selectable', true);
             d3.select(`#county-geo-${props.selectedCounty}`).classed('county-geo-selected', true);
         }
+    } else {
+        d3.selectAll('.county-geo').classed('county-predict', true);
+        d3.select(`#county-geo-${props.selectedCounty}`).classed('county-predict', true);
     }
 }

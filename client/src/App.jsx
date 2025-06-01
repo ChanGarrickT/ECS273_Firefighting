@@ -11,25 +11,6 @@ import PredictionForm from "./components/predictionForm";
 const MAX_INCIDENTS = 5;
 
 export default function App(){
-    let input = {
-        fires: 100,
-        temperature: 100,
-        precipitation: 100,
-        PSDI: 100,
-    }
-    
-    fetch("http://localhost:8000/predict/", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify(input)
-    }).then((res) => res.json())
-    .then((data) => {
-        console.log(data)
-        console.log(data.predictions)
-    })
-
     // Track the view mode
     const [mode, setMode] = useState('History');
     const modeRef = useRef(mode);
@@ -40,6 +21,7 @@ export default function App(){
         setFilter('YrMo');
         setSelectedCounty('None');
         setSelectedIncidents([]);
+        setSelectedPredictions([]);
     }, [mode]);   
     const changeMode = (e) => setMode(e.target.value);
 
@@ -71,12 +53,20 @@ export default function App(){
         selectedCountyRef.current = selectedCounty;
     }, [selectedCounty]);
 
+    // Track predictions
+    const [predictions, setPredictions] = useState({});
+    const predictionsRef = useRef(predictions);
+    useEffect(() => {
+        predictionsRef.current = predictions
+    }, [predictions]);
 
+    // Track selected counties for predictions
+    const [selectedPredictions, setSelectedPredictions] = useState([]);
 
     // Add an incident to compare
     async function addIncident(input){
         try{
-            await fetch(`http://localhost:8000/history?year=${input.year}&month=${input.month}&county=${input.countyName}`)
+            await fetch(`http://localhost:8000/history?year=${input.year}&month=${input.month}&county=${input.County}`)
                 .then((res) => res.json())
                 .then((data) => {            
                     const incident = data[0];
@@ -129,6 +119,75 @@ export default function App(){
         })
     }
 
+    // Send a request to the model
+    async function makePredictions(input){
+        fetch("http://localhost:8000/predict/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(input)})
+                .then((res) => res.json())
+                .then((data) => {
+                    setPredictions(data.predictions);
+                    console.log(data.predictions);
+            }
+        )    
+    }
+
+    // Add a county to the list of prediction comparisons
+    function addPrediction(county){
+        let toAdd = null;
+        for(let i = 0; i < predictionsRef.current.length; i++){
+            if(predictionsRef.current[i].County === county){
+                toAdd = predictionsRef.current[i];
+                break;
+            }
+        }
+        setSelectedPredictions((prev) => {
+            if(prev.length >= MAX_INCIDENTS){
+                return prev;
+            }
+            for(let i = 0; i < prev.length; i++){
+                if(county === prev[i].County){
+                    return prev;
+                }
+            }
+            console.log([...prev, toAdd]);
+            
+            return [...prev, toAdd];
+        })
+    }
+
+    // Remove a county to the list of prediction comparisons
+    function removePrediction(index){
+        setSelectedPredictions((prev) => {
+            if(index >= 0 && index <= prev.length){
+                const tmp = [...prev];
+                tmp.splice(index, 1);
+                return tmp;
+            } else {
+                return prev;
+            }
+        })
+    }
+
+    // Update selected comparisons if a new prediction is made
+    useEffect(() => {
+        setSelectedPredictions((prev) => {
+            let newList = [];
+            for(let s = 0; s < prev.length; s++){
+                for(let c = 0; c < predictions.length; c++){
+                    if(predictions[c].County === prev[s].County){
+                        newList.push(predictions[c]);
+                        break;
+                    }
+                }
+            }
+            return newList;
+        })
+    }, [predictions])
+
     // Variables and functions to pass to menus
     const menuProps = {
         mode: mode,
@@ -148,14 +207,24 @@ export default function App(){
         selectedYearMonth: selectedYearMonth,
         selectedCounty: selectedCounty,
         setSelectedCounty: setSelectedCounty,
-        addIncident: (incident) => addIncident(incident)
+        addIncident: (incident) => addIncident(incident),
+        addPrediction: addPrediction
     };
 
     // Variables and functions to pass to the incident labels
     const labelProps = {
+        modeRef: modeRef,
         selectedIncidents: selectedIncidents,
-        removeIncident: removeIncident
+        selectedPredictions: selectedPredictions,
+        removeIncident: removeIncident,
+        removePrediction: removePrediction
     };
+
+    // Variables to pass to the prediction form
+    const formProps = {
+        predictions: predictions,
+        makePredictions: makePredictions
+    }
 
     return(
         <div className="flex flex-col h-full w-full">
@@ -170,11 +239,8 @@ export default function App(){
             </header>
             <div className="flex flex-row h-3/4 w-39/40 m-auto"> {/* Main container */}
                 <div className="flex-col w-3/8 h-full p-2"> {/* Left container */}
-                    {/* <h3 className="text-left text-xl h-[2rem]">Map</h3> */}
                     <div className="flex flex-row map-top align-center"> {/* Menu container */}
-                        {mode === 'History' ? <Menus.HistoryMenus {...menuProps}/> : <div className="h-[2rem]"></div>}
-                        {/* <h3 className="text-left text-xl h-[2rem]">{mode === "History" ? "Select Year & Month, then County" : "Select County"}</h3> */}
-                        {/* {mode === "History" ? <Menus.TimeSelector setTime={setYearMonth}/> : null} */}
+                        {mode === 'History' ? <Menus.HistoryMenus {...menuProps}/> : <div className="text-xl h-[2rem]">View Predictions by County</div>}
                     </div>
                     <div className="flex flew-row w-full h-[calc(100%_-_2rem)]"> {/* Map and selector container */}
                         <div className="border-2 border-gray-300 rounded-xl w-5/7 h-full mr-2">
@@ -190,13 +256,11 @@ export default function App(){
                         <IncidentLabel {...labelProps}/>
                     </div>
                     <div className="h-[calc(50%_-_1rem)] p-2">
-                        {/* <div className="border-2 border-gray-300 rounded-xl h-full"> */}
-                            {mode === 'History' ? <WeatherData data={selectedIncidents}/> : <PredictionForm />}
-                        {/* </div> */}
+                        {mode === 'History' ? <WeatherData data={selectedIncidents}/> : <PredictionForm {...formProps} data={selectedPredictions}/>}
                     </div>
                     <div className="h-[calc(50%_-_1rem)] p-2">
                         <div className="border-2 border-gray-300 rounded-xl h-full">
-                            <DamageData data={selectedIncidents}/>
+                            <DamageData data={mode === "History" ? selectedIncidents : selectedPredictions} predictions={mode === "Prediction" ? predictions : null}/>
                         </div>
                     </div>
                 </div>
