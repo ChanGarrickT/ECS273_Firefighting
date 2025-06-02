@@ -97,7 +97,7 @@ export default function App(){
                 return prev;
             }
             for(let i = 0; i < prev.length; i++){
-                if(incident.year === prev[i].year && incident.month === prev[i].month && incident.countyName === prev[i].countyName){
+                if(incident.year === prev[i].year && incident.month === prev[i].month && incident.County === prev[i].County){
                     return prev;                
                 }
             }
