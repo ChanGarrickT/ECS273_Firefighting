@@ -6,7 +6,7 @@ import { countyNameList, monthConversionAbr } from "../utilities";
 export default function IncidentLabel(props){
     // If there are more than 3 selections, shrink text to fit more on screen
     useEffect(() => {
-        if(props.selectedIncidents.length <= 3 || props.selectedPredictions.length <= 3){
+        if(props.selectedIncidents.length <= 3 && props.selectedPredictions.length <= 3){
             d3.select('#incident-label-container').classed('text-xs', false).classed('text-s', true);
         } else {
             d3.select('#incident-label-container').classed('text-s', false).classed('text-xs', true);

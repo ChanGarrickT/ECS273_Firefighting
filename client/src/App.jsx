@@ -1,4 +1,3 @@
-import * as d3 from "d3";
 import { useEffect, useState, useRef } from "react";
 import CaliMap from "./components/map";
 import Menus from "./components/menus";
@@ -128,9 +127,8 @@ export default function App(){
             },
             body: JSON.stringify(input)})
                 .then((res) => res.json())
-                .then((data) => {
+                .then((data) => { 
                     setPredictions(data.predictions);
-                    console.log(data.predictions);
             }
         )    
     }
@@ -153,8 +151,6 @@ export default function App(){
                     return prev;
                 }
             }
-            console.log([...prev, toAdd]);
-            
             return [...prev, toAdd];
         })
     }

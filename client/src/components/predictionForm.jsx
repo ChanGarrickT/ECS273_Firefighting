@@ -26,23 +26,23 @@ export default function PredictionForm(props){
                 <div className="flex flex-col w-full h-full m-auto">
                     <div className="flex flex-row m-3 h-2/3">
                         <div id="form-col-1" className="flex flex-col w-1/2 mr-8">
-                            <div className="flex flex-row align-center mb-5 h-1/2">
-                                <label htmlFor="prev-mon-input" className="text-sm text-black mr-5 my-auto w-3/5">Fires in Previous Month</label>
-                                <input type="number" id="prev-mon-input" className="w-2/5 p-2 text-black text-l border border-green-700 rounded-lg" defaultValue="0" min="0"/>
+                            <div className="flex flex-row align-center mb-3 h-1/2">
+                                <label htmlFor="prev-mon-input" className="text-sm text-black mr-5 my-auto w-7/10">Fires in Previous Month</label>
+                                <input type="number" id="prev-mon-input" className="w-3/10 p-2 text-black text-l border border-green-700 rounded-lg" defaultValue="0" min="0"/>
                             </div>
                             <div className="flex flex-row align-center h-1/2">
-                                <label htmlFor="temp-input" className="text-sm text-black mr-5 my-auto w-3/5">Temperature (ºF)</label>
-                                <input type="number" id="temp-input" className="w-2/5 p-2 text-black text-l border border-green-700 rounded-lg" defaultValue="85" step="any"/>
+                                <label htmlFor="temp-input" className="text-sm text-black mr-5 my-auto w-7/10">Temperature (ºF)</label>
+                                <input type="number" id="temp-input" className="w-3/10 p-2 text-black text-l border border-green-700 rounded-lg" defaultValue="85" step="any"/>
                             </div>
                         </div>
                         <div id="form-col-2" className="flex flex-col w-1/2 ml-8">
-                            <div className="flex flex-row align-center mb-5 h-1/2">
-                                <label htmlFor="precip-input" className="text-sm text-black mr-5 my-auto w-3/5">Precipitation (in.)</label>
-                                <input type="number" id="precip-input" className="w-2/5 p-2 text-black text-l border border-green-700 rounded-lg" defaultValue="0" min="0" step="any"/>
+                            <div className="flex flex-row align-center mb-3 h-1/2">
+                                <label htmlFor="precip-input" className="text-sm text-black mr-5 my-auto w-7/10">Precipitation (in.)</label>
+                                <input type="number" id="precip-input" className="w-3/10 p-2 text-black text-l border border-green-700 rounded-lg" defaultValue="0" min="0" step="any"/>
                             </div>
                             <div className="flex flex-row align-center h-1/2">
-                                <label htmlFor="drought-input" className="text-sm text-black mr-5 my-auto w-3/5">Drought Index</label>
-                                <input type="number" id="drought-input" className="w-2/5 p-2 text-black text-l border border-green-700 rounded-lg" defaultValue="0" step="any"/>
+                                <label htmlFor="drought-input" className="text-sm text-black mr-5 my-auto w-7/10">Drought Index</label>
+                                <input type="number" id="drought-input" className="w-3/10 p-2 text-black text-l border border-green-700 rounded-lg" defaultValue="0" step="any"/>
                             </div>
                         </div>                                              
                     </div>
