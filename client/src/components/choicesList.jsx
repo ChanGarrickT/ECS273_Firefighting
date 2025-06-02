@@ -9,9 +9,9 @@ export default function ChoicesList(props){
     // Respond to changes in filters and filter mode
     useEffect(() => {
         if(props.mode === "History"){
-            if(props.filter === 'YrMo'){
+            if(props.filter === "YrMo"){
                 addNames(containerRef.current, props);
-            } else if(props.filter === 'County'){
+            } else if(props.filter === "County"){
                 addTimes(containerRef.current, props);
             }
         } else {
@@ -28,7 +28,7 @@ export default function ChoicesList(props){
 function addNames(divElement, props){
     // Clear the list first
     const container = d3.select(divElement);
-    container.selectAll('*').remove();
+    container.selectAll("*").remove();
     if(props.mode === "History"){
         try{
             fetch(`http://localhost:8000/history?year=${props.selectedYearMonth.year}&month=${props.selectedYearMonth.month}`)
@@ -39,30 +39,30 @@ function addNames(divElement, props){
                             if(countyNameList[c].formatted === data[i].County){
                                 let payload = {...props};
                                 payload.selectedCounty = data[i].County;     
-                                container.append('p')
-                                    .attr('id', `county-choice-${data[i].County}`)
-                                    .attr('class', 'county-choice')
+                                container.append("p")
+                                    .attr("id", `county-choice-${data[i].County}`)
+                                    .attr("class", "county-choice")
                                     .text(countyNameList[c].clean)
-                                    .on('click', function(event) {handleClick(payload)})
-                                    .on('mouseover', () => highlight(data[i].County, props.mode))
-                                    .on('mouseout', () => unhighlight(data[i].County));
+                                    .on("click", function(event) {handleClick(payload)})
+                                    .on("mouseover", () => highlight(data[i].County, props.mode))
+                                    .on("mouseout", () => unhighlight(data[i].County));
                             }
                         }
                     }
                 })
         } catch(error){
-            console.error('Error fetching: ', error);
+            console.error("Error fetching: ", error);
             
         }
     } else {
         countyNameList.forEach((c) => {
-            container.append('p')
-                .attr('id', `county-choice-${c.formatted}`)
-                .attr('class', 'county-choice')
+            container.append("p")
+                .attr("id", `county-choice-${c.formatted}`)
+                .attr("class", "county-choice")
                 .text(c.clean)
-                .on('click', function(event) {props.addPrediction(c.formatted)})
-                .on('mouseover', () => highlight(c.formatted, props.mode))
-                .on('mouseout', () => unhighlight(c.formatted));
+                .on("click", function(event) {props.addPrediction(c.formatted)})
+                .on("mouseover", () => highlight(c.formatted, props.mode))
+                .on("mouseout", () => unhighlight(c.formatted));
         })
     }
 }
@@ -71,7 +71,7 @@ function addNames(divElement, props){
 function addTimes(divElement, props){
     // Clear the list first
     const container = d3.select(divElement);
-    container.selectAll('*').remove();
+    container.selectAll("*").remove();
 
     try{
         fetch(`http://localhost:8000/history?county=${props.selectedCounty}`)
@@ -82,15 +82,15 @@ function addTimes(divElement, props){
                     const month = data[i].Started.substring(4,6);
                     let payload = {...props};
                     payload.selectedYearMonth = {year: year, month: month};
-                    container.append('p')
-                        .attr('id', `time-choice-${month}-${year}`)
-                        .attr('class', 'time-choice')
+                    container.append("p")
+                        .attr("id", `time-choice-${month}-${year}`)
+                        .attr("class", "time-choice")
                         .text(`${monthConversion[month]} ${year}`)
-                        .on('click', function(event) {handleClick(payload)});                    
+                        .on("click", function(event) {handleClick(payload)});                    
                 }               
             })
     } catch(error){
-        console.error('Error fetching: ', error);
+        console.error("Error fetching: ", error);
         
     }
 }

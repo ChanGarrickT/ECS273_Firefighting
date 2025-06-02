@@ -1,6 +1,6 @@
 import * as d3 from "d3";
-import { useEffect, useRef, useState } from "react";
-import { isEmpty, debounce } from 'lodash';
+import { useEffect, useRef } from "react";
+import { isEmpty, debounce } from "lodash";
 
 const margin = {top: 5, bottom: 8, left: 35, right: 5};
 
@@ -41,7 +41,7 @@ export default function FireBarChart(props){
 
 function drawGraph(svgElement, data, width, height, feature){
     const svg = d3.select(svgElement);
-    svg.selectAll('*').remove();
+    svg.selectAll("*").remove();
 
     if(isEmpty(data)){
         return;
@@ -59,35 +59,35 @@ function drawGraph(svgElement, data, width, height, feature){
         .domain(calcYAxis(yExtents))
         .nice();
 
-    svg.append('line')
-        .attr('x1', margin.left)
-        .attr('y1', yScale(0)+0.5)
-        .attr('x2', width - margin.right)
-        .attr('y2', yScale(0)+0.5)
-        .attr('stroke', 'black')
-        .attr('stroke-width', 1);
+    svg.append("line")
+        .attr("x1", margin.left)
+        .attr("y1", yScale(0)+0.5)
+        .attr("x2", width - margin.right)
+        .attr("y2", yScale(0)+0.5)
+        .attr("stroke", "black")
+        .attr("stroke-width", 1);
     
     // Draw Y Axis
-    svg.append('g')
-        .attr('transform', `translate(${margin.left}, 0)`)
+    svg.append("g")
+        .attr("transform", `translate(${margin.left}, 0)`)
         .call(d3.axisLeft(yScale).ticks(5, getTickFormatByFeature(feature)));
 
-    const bars = svg.append('g').attr('class', 'bars');
+    const bars = svg.append("g").attr("class", "bars");
 
-    bars.selectAll('rect')
+    bars.selectAll("rect")
         .data(data)
-        .join('rect')
-        .attr('x', (d) => xScale(`${d.County} ${d.year}${d.month}`) + xScale.bandwidth()/10)
-        .attr('y', yScale(0))
-        .attr('width', xScale.bandwidth()/1.25)
-        .attr('height', 0)
-        .attr('class', 'bar')
-        .attr('id', (d) => `bar-${d.County}`)
+        .join("rect")
+        .attr("x", (d) => xScale(`${d.County} ${d.year}${d.month}`) + xScale.bandwidth()/10)
+        .attr("y", yScale(0))
+        .attr("width", xScale.bandwidth()/1.25)
+        .attr("height", 0)
+        .attr("class", "bar")
+        .attr("id", (d) => `bar-${d.County}`)
         .transition()
         .duration(250)
         .ease(d3.easePolyInOut)
-        .attr('y', (d) => yScale(Math.max(0, getFeature(d, feature))))
-        .attr('height', (d) => Math.abs(yScale(0) - yScale(getFeature(d, feature))))
+        .attr("y", (d) => yScale(Math.max(0, getFeature(d, feature))))
+        .attr("height", (d) => Math.abs(yScale(0) - yScale(getFeature(d, feature))))
 }
 
 function calcYAxis(extent){
@@ -102,29 +102,29 @@ function calcYAxis(extent){
 
 function getFeature(datum, feature){
     switch (feature){
-        case 'AcresBurned':
+        case "AcresBurned":
             return datum.AcresBurned;
-        case 'Injuries':
+        case "Injuries":
             return datum.Injuries;
-        case 'Fatalities':
+        case "Fatalities":
             return datum.Fatalities;
-        case 'StructuresDestroyed':
+        case "StructuresDestroyed":
             return datum.StructuresDestroyed;
-        case 'StructuresDamaged':
+        case "StructuresDamaged":
             return datum.StructuresDamaged;
-        case 'PropetyValue_Damage':
+        case "PropetyValue_Damage":
             return datum.PropetyValue_Damage;
-        case 'Drought_Index':
+        case "Drought_Index":
             return datum.Drought_Index;
-        case 'Precipitation':
+        case "Precipitation":
             return datum.Precipitation;
-        case 'Temperature':
+        case "Temperature":
             return datum.Temperature;
-        case 'Heating_Degree_Days':
+        case "Heating_Degree_Days":
             return datum.Heating_Degree_Days;
-        case 'Cooling_Degree_Days':
+        case "Cooling_Degree_Days":
             return datum.Cooling_Degree_Days;
-        case 'Fires':      
+        case "Fires":      
             return datum.Fires;
         default:
             return null;
@@ -133,30 +133,30 @@ function getFeature(datum, feature){
 
 function getTickFormatByFeature(feature){
     switch (feature){
-        case 'AcresBurned':
-            return '~s'
-        case 'Injuries':
-            return '';
-        case 'Fatalities':
-            return '';
-        case 'StructuresDestroyed':
-            return 'r';
-        case 'StructuresDamaged':
-            return 'r';
-        case 'PropetyValue_Damage':
-            return '~s';
-        case 'Drought_Index':
-            return '';
-        case 'Precipitation':
-            return '';
-        case 'Temperature':
-            return 'r';
-        case 'Heating_Degree_Days':
-            return 'r';
-        case 'Cooling_Degree_Days':
-            return 'r';
-        case 'Fires':
-            return '';
+        case "AcresBurned":
+            return "~s"
+        case "Injuries":
+            return "";
+        case "Fatalities":
+            return "";
+        case "StructuresDestroyed":
+            return "r";
+        case "StructuresDamaged":
+            return "r";
+        case "PropetyValue_Damage":
+            return "~s";
+        case "Drought_Index":
+            return "";
+        case "Precipitation":
+            return "";
+        case "Temperature":
+            return "r";
+        case "Heating_Degree_Days":
+            return "r";
+        case "Cooling_Degree_Days":
+            return "r";
+        case "Fires":
+            return "";
         default:
             return null;
     }

@@ -1,7 +1,6 @@
 import * as d3 from "d3";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import FireBarChart from "./fireBarChart";
-import { monthList } from "../utilities";
 
 export default function PredictionForm(props){
     // Make an initial prediction with default values

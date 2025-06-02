@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { feature, mesh } from "topojson-client";
 import { useEffect, useRef } from "react";
-import { isEmpty, debounce } from 'lodash';
+import { isEmpty, debounce } from "lodash";
 import { highlight, unhighlight } from "../utilities";
 import Cali from "./caCountiesTopoSimple.json"
 
@@ -42,7 +42,7 @@ export default function CaliMap(props){
     }, [props.selectedYearMonth, props.mode, props.filter, props.selectedCounty]);
 
     return(
-        <div className="map-container flex flex-row" ref={containerRef} style={{ width: '100%', height: '100%' }}>
+        <div className="map-container flex flex-row" ref={containerRef} style={{ width: "100%", height: "100%" }}>
             <svg id="map-svg" className="w-full" ref={svgRef} width="100%" height="100%"></svg>
         </div>
     )
@@ -50,7 +50,7 @@ export default function CaliMap(props){
 
 function drawMap(svgElement, width, height, props){
     const svg = d3.select(svgElement);
-    svg.selectAll('*').remove();    // clear previous render
+    svg.selectAll("*").remove();    // clear previous render
     const centerX = width / 2;
     const centerY = height / 2; 
 
@@ -61,39 +61,39 @@ function drawMap(svgElement, width, height, props){
 
     const mapPath = d3.geoPath().projection(projection);
     
-    const g = svg.append('g');
+    const g = svg.append("g");
     
     // County features
-    const counties = g.append('g')
-        .selectAll('path')
+    const counties = g.append("g")
+        .selectAll("path")
         .data(feature(Cali, Cali.objects.subunits).features)
-        .join('path')
-        .attr('id', (d) => `county-geo-${d.properties.name}`)
-        .attr('class', 'county-geo')
-        .attr('fill', 'gray')
-        .attr('stroke', 'white')
-        .attr('stroke-width', 0.5)
-        .attr('d', mapPath)
-        .on('click', function(event, d){handleClick(this, d.properties.name)})
-        .on('mouseover', function(event, d) {highlight(d.properties.name, props.mode)})
-        .on('mouseout', function(event, d) {unhighlight(d.properties.name)});
+        .join("path")
+        .attr("id", (d) => `county-geo-${d.properties.name}`)
+        .attr("class", "county-geo")
+        .attr("fill", "gray")
+        .attr("stroke", "white")
+        .attr("stroke-width", 0.5)
+        .attr("d", mapPath)
+        .on("click", function(event, d){handleClick(this, d.properties.name)})
+        .on("mouseover", function(event, d) {highlight(d.properties.name, props.mode)})
+        .on("mouseout", function(event, d) {unhighlight(d.properties.name)});
 
     // Draw outer outline (a === b means draw only unshared borders)
-    const outerEdge = g.append('path')
+    const outerEdge = g.append("path")
         .datum(mesh(Cali, Cali.objects.subunits, (a,b) => a === b))
-        .attr('class', 'outerEdge')
-        .attr('fill', 'none')
-        .attr('stroke', 'black')
-        .attr('stroke-width', 1)
-        .attr('d', mapPath);
+        .attr("class", "outerEdge")
+        .attr("fill", "none")
+        .attr("stroke", "black")
+        .attr("stroke-width", 1)
+        .attr("d", mapPath);
     
     // Zoom logic
     const zoom = d3.zoom()
         .scaleExtent([1, MAX_ZOOM])
-        .on('zoom', zoomManual);
+        .on("zoom", zoomManual);
 
     // Reset when clicking not on a county
-    svg.on('click', () => {
+    svg.on("click", () => {
         svg.transition(d3.easeQuadInOut)
             .duration(500)
             .call(
@@ -106,9 +106,9 @@ function drawMap(svgElement, width, height, props){
     svg.call(zoom);
         
     function zoomManual(e){
-        g.attr('transform', e.transform);
-        counties.attr('stroke-width', 0.5 / e.transform.k);
-        outerEdge.attr('stroke-width', 1 / e.transform.k); 
+        g.attr("transform", e.transform);
+        counties.attr("stroke-width", 0.5 / e.transform.k);
+        outerEdge.attr("stroke-width", 1 / e.transform.k); 
     }
 
     // Scrapped feature
@@ -133,7 +133,7 @@ function drawMap(svgElement, width, height, props){
     function handleClick(element, name){
         if(props.mode === "History"){
             // If filtering by time, only highlighted counties should respond to clicks
-            if(d3.select(element).classed('county-geo-incident')){
+            if(d3.select(element).classed("county-geo-incident")){
                 const selectedYear = props.selectedYearMonth.year;
                 const selectedMonth =  props.selectedYearMonth.month; 
                 props.addIncident({
@@ -142,7 +142,7 @@ function drawMap(svgElement, width, height, props){
                     County: name
                 });
             // If filtering by county, all counties are clickable
-            } else if(d3.select(element).classed('county-geo-selectable')){
+            } else if(d3.select(element).classed("county-geo-selectable")){
                 props.setSelectedCounty(name);
             }
         } else {
@@ -152,11 +152,11 @@ function drawMap(svgElement, width, height, props){
 }
 
 async function highlightIncidents(props){
-    d3.selectAll('.county-geo').classed('county-geo-incident county-geo-selected county-geo-predict', false);                   
+    d3.selectAll(".county-geo").classed("county-geo-incident county-geo-selected county-geo-predict", false);                   
 
-    if(props.mode === 'History'){
+    if(props.mode === "History"){
         // If filtering by time, highlight only counties with incidents in the selected time
-        if(props.filter === 'YrMo'){
+        if(props.filter === "YrMo"){
             const selectedYear = props.selectedYearMonth.year;
             const selectedMonth =  props.selectedYearMonth.month; 
             try{
@@ -164,19 +164,19 @@ async function highlightIncidents(props){
                     .then((res) => res.json())
                     .then((data) => {
                         data.forEach((d) => {
-                            d3.select(`#county-geo-${d.County}`).classed('county-geo-incident', true);
+                            d3.select(`#county-geo-${d.County}`).classed("county-geo-incident", true);
                         })
                     })
             } catch(error){
-                console.error('Error fetching: ', error);
+                console.error("Error fetching: ", error);
             }
         // If filtering by county, all counties should be highlighted; keep selected county super highlighted
-        } else if(props.filter === 'County'){
-            d3.selectAll('.county-geo').classed('county-geo-selectable', true);
-            d3.select(`#county-geo-${props.selectedCounty}`).classed('county-geo-selected', true);
+        } else if(props.filter === "County"){
+            d3.selectAll(".county-geo").classed("county-geo-selectable", true);
+            d3.select(`#county-geo-${props.selectedCounty}`).classed("county-geo-selected", true);
         }
     } else {
-        d3.selectAll('.county-geo').classed('county-predict', true);
-        d3.select(`#county-geo-${props.selectedCounty}`).classed('county-predict', true);
+        d3.selectAll(".county-geo").classed("county-predict", true);
+        d3.select(`#county-geo-${props.selectedCounty}`).classed("county-predict", true);
     }
 }

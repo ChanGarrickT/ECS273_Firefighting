@@ -11,28 +11,28 @@ const MAX_INCIDENTS = 5;
 
 export default function App(){
     // Track the view mode
-    const [mode, setMode] = useState('History');
+    const [mode, setMode] = useState("History");
     const modeRef = useRef(mode);
     // Reset settings for history mode when the mode is changed
     useEffect(() => {    
         modeRef.current = mode;
-        setYearMonth({year: 'None', month: 'None'});
-        setFilter('YrMo');
-        setSelectedCounty('None');
+        setYearMonth({year: "None", month: "None"});
+        setFilter("YrMo");
+        setSelectedCounty("None");
         setSelectedIncidents([]);
         setSelectedPredictions([]);
     }, [mode]);   
     const changeMode = (e) => setMode(e.target.value);
 
     // Track the filter mode
-    const [filter, setFilter] = useState('YrMo');
+    const [filter, setFilter] = useState("YrMo");
     const filterRef = useRef(filter);
     useEffect(() => {
         filterRef.current = filter;
     }, [filter]);
 
     // Track the selected year and month
-    const [selectedYearMonth, setYearMonth] = useState({year: 'None', month: 'None'})
+    const [selectedYearMonth, setYearMonth] = useState({year: "None", month: "None"})
     const selectedYearMonthRef = useRef(selectedYearMonth);
     useEffect(() => {
         selectedYearMonthRef.current = selectedYearMonth;
@@ -46,7 +46,7 @@ export default function App(){
     }, [selectedIncidents]);
 
     // Track the selected county
-    const [selectedCounty, setSelectedCounty] = useState('None');
+    const [selectedCounty, setSelectedCounty] = useState("None");
     const selectedCountyRef = useRef(selectedCounty);
     useEffect(() => {
         selectedCountyRef.current = selectedCounty;
@@ -86,11 +86,11 @@ export default function App(){
                     addIncidentHelper(incidentWithData);
                 })
         } catch(error){
-            console.error('Error fetching: ', error);
+            console.error("Error fetching: ", error);
         }
     }
 
-    // Set state of incident list; this can't be done in the same function as fetching
+    // Set state of incident list; this can"t be done in the same function as fetching
     function addIncidentHelper(incident){
         setSelectedIncidents((prev) => {
             if(prev.length >= MAX_INCIDENTS){
@@ -236,7 +236,7 @@ export default function App(){
             <div className="flex flex-row h-3/4 w-39/40 m-auto"> {/* Main container */}
                 <div className="flex-col w-3/8 h-full p-2"> {/* Left container */}
                     <div className="flex flex-row map-top align-center"> {/* Menu container */}
-                        {mode === 'History' ? <Menus.HistoryMenus {...menuProps}/> : <div className="text-xl h-[2rem]">View Predictions by County</div>}
+                        {mode === "History" ? <Menus.HistoryMenus {...menuProps}/> : <div className="text-xl h-[2rem]">View Predictions by County</div>}
                     </div>
                     <div className="flex flew-row w-full h-[calc(100%_-_2rem)]"> {/* Map and selector container */}
                         <div className="border-2 border-gray-300 rounded-xl w-5/7 h-full mr-2">
@@ -252,7 +252,7 @@ export default function App(){
                         <IncidentLabel {...labelProps}/>
                     </div>
                     <div className="h-[calc(50%_-_1rem)] p-2">
-                        {mode === 'History' ? <WeatherData data={selectedIncidents}/> : <PredictionForm {...formProps} data={selectedPredictions}/>}
+                        {mode === "History" ? <WeatherData data={selectedIncidents}/> : <PredictionForm {...formProps} data={selectedPredictions}/>}
                     </div>
                     <div className="h-[calc(50%_-_1rem)] p-2">
                         <div className="border-2 border-gray-300 rounded-xl h-full">

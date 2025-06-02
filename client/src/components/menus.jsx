@@ -16,8 +16,8 @@ export function HistoryMenus(props){
     return (
         <div className="h-[2rem] flex flex-row align-center">
             <FilterSelector {...props}/>
-            {props.filter === 'YrMo' ? <TimeSelector {...props}/> : null}
-            {props.filter === 'County' ? <CountySelector {...props}/> : null}
+            {props.filter === "YrMo" ? <TimeSelector {...props}/> : null}
+            {props.filter === "County" ? <CountySelector {...props}/> : null}
         </div>
     )
 }
@@ -43,14 +43,14 @@ export function FilterSelector(props){
 export function TimeSelector(props){
     // Immediately save changes user makes
     function notifyChange(){
-        const yr = d3.select('#year-selector').property('value');
-        const mo = d3.select('#month-selector').property('value');
+        const yr = d3.select("#year-selector").property("value");
+        const mo = d3.select("#month-selector").property("value");
         props.setYearMonth({year: yr, month: mo});
     }
   
     useEffect(() => {
-        d3.select('#year-selector').property('value', props.selectedYearMonth.year);
-        d3.select('#month-selector').property('value', props.selectedYearMonth.month);
+        d3.select("#year-selector").property("value", props.selectedYearMonth.year);
+        d3.select("#month-selector").property("value", props.selectedYearMonth.month);
     }, [props.selectedYearMonth])
 
     return (
@@ -71,14 +71,14 @@ export function TimeSelector(props){
 export function CountySelector(props){
     // Immediately save changes user makes
     function notifyChange(e){
-        if(props.modeRef.current === 'History'){
+        if(props.modeRef.current === "History"){
             props.setSelectedCounty(e.target.value);
         }
     }
 
     // Change the dropdown value if county selection is changed elsewhere (e.g. clicking the map)
     useEffect(() => {
-        d3.select('#county-selector').property('value', props.selectedCounty)
+        d3.select("#county-selector").property("value", props.selectedCounty)
     }, [props.selectedCounty])
 
     return (
