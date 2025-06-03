@@ -37,6 +37,7 @@ body {
 
 .county-geo:hover {
     fill: #aaa;
+    cursor: pointer;
 }
 
 .county-geo-incident {
@@ -70,6 +71,7 @@ body {
     font-size: 0.9rem;
     padding: 3px 8px;
     margin: 3px;
+    cursor: pointer;
     transition: background-color 0.15s;
     -webkit-user-select: none;
     -ms-user-select: none;
@@ -91,9 +93,23 @@ body {
     color: white;
 }
 
+.incident-list > * span:hover {
+    cursor: pointer;
+}
+
 .incident-list > *:hover span {
     transition: color 0.25s;
     color: red;
+}
+
+.unselectable {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.bars > * {
+    transition: fill 0.15s;
 }
 
 .bars > :nth-child(1), .incident-list > :nth-child(1){
@@ -101,9 +117,17 @@ body {
     fill: dodgerblue;
 }
 
+.bars > :nth-child(1):hover{
+    fill: hsl(210, 100%, 71%);
+}
+
 .bars > :nth-child(2), .incident-list > :nth-child(2) {
     background-color: darkviolet;
     fill: darkviolet;
+}
+
+.bars > :nth-child(2):hover {
+    fill: hsl(282, 100%, 56%);
 }
 
 .bars > :nth-child(3), .incident-list > :nth-child(3) {
@@ -111,9 +135,17 @@ body {
     fill: darkorange;
 }
 
+.bars > :nth-child(3):hover {
+    fill: hsl(33, 100%, 65%);
+}
+
 .bars > :nth-child(4), .incident-list > :nth-child(4) {
     background-color: lightseagreen;
     fill: lightseagreen;
+}
+
+.bars > :nth-child(4):hover {
+    fill: hsl(177, 70%, 46%)
 }
 
 .bars > :nth-child(5), .incident-list > :nth-child(5) {
@@ -121,8 +153,22 @@ body {
     fill: deeppink;
 }
 
+.bars > :nth-child(5):hover {
+    fill: hsl(328, 100%, 74%);
+}
+
+.tooltip {
+    position: absolute;
+    background-color: black;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0 0.5rem;
+    border-radius: 8px;
+}
+
 #submit-button {
     transition: background-color 0.2s;
+    cursor: pointer;
 }
 
 #submit-button:hover {

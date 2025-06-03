@@ -7,15 +7,15 @@ export default function WeatherData(props){
             <div className="flex flex-row h-full">
                 <div className="flex flex-col w-1/3 h-full">
                     <FireBarChart {...props} feature="Drought_Index"/>
-                    <p className="text-xs text-center h-1rem p-1">Drought Index</p>
+                    <p className="text-xs text-center h-1rem p-1 unselectable">Drought Index</p>
                 </div>
                 <div className="flex flex-col w-1/3 h-full">
                     <FireBarChart {...props} feature="Precipitation"/>
-                    <p className="text-xs text-center p-1">Precipitation (in.)</p>
+                    <p className="text-xs text-center p-1 unselectable">Precipitation (in.)</p>
                 </div>
                 <div className="flex flex-col w-1/3 h-full">
                     <FireBarChart {...props} feature="Temperature"/>
-                    <p className="text-xs text-center p-1">Temperature (ºF)</p>
+                    <p className="text-xs text-center p-1 unselectable">Temperature (ºF)</p>
                 </div>
                 {/* <div className="flex flex-col w-1/5 h-full">
                     <FireBarChart {...props} feature="Heating_Degree_Days"/>

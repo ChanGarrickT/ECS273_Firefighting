@@ -23,7 +23,7 @@ export default function IncidentLabel(props){
                             fullName = countyNameList[i].clean;
                         }
                     }
-                    return <div className="mx-1 my-auto px-2 py-1" key={"name"+idx}>{fullName} - {monthConversionAbr[incident.month]} {incident.year}<span className="ml-3 mr-0" onClick={() => props.removeIncident(idx)}>×</span></div>
+                    return <div className="mx-1 my-auto px-2 py-1 unselectable" key={"name"+idx}>{fullName} - {monthConversionAbr[incident.month]} {incident.year}<span className="ml-3 mr-0" onClick={() => props.removeIncident(idx)}>×</span></div>
                 })}
             </div>
         )
@@ -37,7 +37,7 @@ export default function IncidentLabel(props){
                             fullName = countyNameList[i].clean;
                         }
                     }
-                    return <div className="mx-1 my-auto px-2 py-1" key={"name"+idx}>{fullName + " County"} <span className="ml-3 mr-0" onClick={() => props.removePrediction(idx)}>×</span></div>
+                    return <div className="mx-1 my-auto px-2 py-1 unselectable" key={"name"+idx}>{fullName + " County"} <span className="ml-3 mr-0" onClick={() => props.removePrediction(idx)}>×</span></div>
                 })}
             </div>
         )

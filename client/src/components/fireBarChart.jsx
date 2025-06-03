@@ -20,7 +20,7 @@ export default function FireBarChart(props){
                     if (entry.target !== containerRef.current) continue;
                     const { width, height } = entry.contentRect;
                     if (width && height) {
-                        drawGraph(svgRef.current, fireStats, width, height, props.feature);
+                        drawGraph(containerRef.current, svgRef.current, fireStats, width, height, props.feature);
                     }
                 }
             }, 100) // wait at least 100 ms
@@ -32,14 +32,14 @@ export default function FireBarChart(props){
     }, [fireStats, props.predictions]);
 
     return (
-        <div className="w-full h-[calc(100%_-_1rem)] p-1" ref={containerRef}>
+        <div id={`${props.feature}-chart`} className="w-full h-[calc(100%_-_1rem)] p-1" ref={containerRef}>
             <svg width="100%" height="100%" ref={svgRef}></svg>
         </div>
     )
 
 }
 
-function drawGraph(svgElement, data, width, height, feature){
+function drawGraph(containerElement, svgElement, data, width, height, feature){
     const svg = d3.select(svgElement);
     svg.selectAll("*").remove();
 
@@ -59,6 +59,7 @@ function drawGraph(svgElement, data, width, height, feature){
         .domain(calcYAxis(yExtents))
         .nice();
 
+    // Draw the X "Axis"
     svg.append("line")
         .attr("x1", margin.left)
         .attr("y1", yScale(0)+0.5)
@@ -74,6 +75,13 @@ function drawGraph(svgElement, data, width, height, feature){
 
     const bars = svg.append("g").attr("class", "bars");
 
+    // The tooltip showing the raw number
+    const tooltip = d3.select(containerElement).append("div")
+        .attr("class", "tooltip text-s")
+        .style("opacity", 0)
+        .style("z-index", 1);
+
+    // Draw the bars
     bars.selectAll("rect")
         .data(data)
         .join("rect")
@@ -83,6 +91,9 @@ function drawGraph(svgElement, data, width, height, feature){
         .attr("height", 0)
         .attr("class", "bar")
         .attr("id", (d) => `bar-${d.County}`)
+        .on("mouseover", showToolTip(tooltip, feature))
+        .on("mousemove", moveToolTip(tooltip))
+        .on("mouseout", hideToolTip(tooltip))
         .transition()
         .duration(250)
         .ease(d3.easePolyInOut)
@@ -159,5 +170,34 @@ function getTickFormatByFeature(feature){
             return "";
         default:
             return null;
+    }
+}
+
+function showToolTip(tooltip, feature){
+    return function(event, d){
+        const width = tooltip.node().offsetWidth;
+        tooltip.html(getFeature(d, feature))
+            .style("left", (event.pageX - width/2) + "px")
+            .style("top", (event.pageY - 30) + "px");
+        tooltip.transition()
+            .duration(150)
+            .style("opacity", 1);
+        }
+}
+
+function moveToolTip(tooltip){
+    return function(event){
+        const width = tooltip.node().offsetWidth;
+        tooltip
+            .style("left", (event.pageX - width/2) + "px")
+            .style("top", (event.pageY - 30) + "px");
+    }
+}
+
+function hideToolTip(tooltip){
+    return function(event){
+        tooltip.transition()
+            .duration(150)
+            .style("opacity", 0);
     }
 }
