@@ -102,7 +102,7 @@ body {
     color: red;
 }
 
-.unselectable {
+.unselectable, text {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;

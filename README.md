@@ -83,7 +83,7 @@ Alternatively, incidents can also be filtered by **County**. Upon selecting a co
 
 Up to 5 incidents can be compared at a time. To remove an incident from the Compare panel, click on the X to the right of the corresponding incident's label above the Compare panel. You may freely switch filter modes without losing selected incidents in the Compare panel. 
 
-**Note:** The colors of the bars will always be in the same order: <span style="color:dodgerblue">1st is blue</span>, <span style="color:darkviolet">2nd is purple</span>. <span style="color:darkorange">3rd is orange</span>, <span style="color:lightseagreen">4th is teal</span>, and <span style="color:deeppink">5th is pink</span>; please keep this in mind when removing incidents and adding new ones.
+**Note:** The colors of the bars will always be in the same order: <span style="color:dodgerblue">1st is blue</span>, <span style="color:darkviolet">2nd is purple</span>. <span style="color:darkorange">3rd is orange</span>, <span style="color:lightseagreen">4th is teal</span>, and <span style="color:deeppink">5th is pink</span>; please keep this in mind when removing incidents and adding new ones. Additionally, if the chart axes are visible but no bar is present, then the value is 0.
 
 ### Make Predictions
 To switch to Prediction mode, use the dropdown menu at the top of the page.
