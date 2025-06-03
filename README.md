@@ -36,15 +36,10 @@ We assume MongoDB Community and Node.js are installed. For Mac users, we assume 
     ```shell
     pip install -r requirements.txt
     ```
-4. Run MongoDB:
+4. If using Windows, proceed to step 5. If using Mac, run MongoDB via Homebrew:
 
-    On Mac, via Homebrew:
     ```shell
     brew services start mongodb-community
-    ```
-    On Windows:
-    ```shell
-    TODO
     ```
 5. In MongoDB, connect to the local database:
     `mongodb://localhost:27017`
