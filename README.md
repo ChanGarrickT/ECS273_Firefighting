@@ -77,7 +77,7 @@ The UI has 4 main components:
 - In the middle is the the List panel, which displays different clickable text depending on the context.
 - On the right is the Compare panel, where bar charts will appear.
 
-<img src="./screenshots/ss1.png" alt="Screenshot of filtering by Year and Month" style="width:100%; height:auto;">
+<img src="./screenshots/ss1.png" alt="Screenshot of app overall" style="width:100%; height:auto;">
 
 ### View Historical Information
 By default, the tool is set to History mode, and allows you to filter incidents by **Year and Month**.
@@ -88,13 +88,15 @@ Upon selecting a year and month, counties with incidents in the chosen timeframe
 
 Alternatively, incidents can also be filtered by **County**. Upon selecting a county, either from the dropdown menu or Map, the List panel will populate with the timeframes of all incidents for that county for which we have data. Click on a timeframe to add that incident to the Compare panel.
 
-<img src="./screenshots/ss3.png" alt="Screenshot of filtering by Year and Month" style="width:50%; height:auto;">
+<img src="./screenshots/ss3.png" alt="Screenshot of filtering by County" style="width:50%; height:auto;">
 
-Up to 5 incidents can be compared at a time. Incidents will be sorted in the order in which they are added. To remove an incident from the Compare panel, click on the X to the right of the corresponding incident's label above the Compare panel. You may freely switch filter modes without losing selected incidents in the Compare panel. 
+Up to 5 incidents can be compared at a time. Incidents will be sorted in the order in which they are added. To remove an incident from the Compare panel, click on the X to the right of the corresponding incident's label above the Compare panel. You may freely switch filter modes without losing selected incidents in the Compare panel. Hover over a bar to view the raw value that the bar represents.
+
+<img src="./screenshots/ss6.png" alt="Screenshot of bar chart tooltip" style="width:15%; height:auto;">
 
 **Note:** The colors of the bars will always be in the same order: <span style="color:dodgerblue">1st is blue</span>, <span style="color:darkviolet">2nd is purple</span>. <span style="color:darkorange">3rd is orange</span>, <span style="color:lightseagreen">4th is teal</span>, and <span style="color:deeppink">5th is pink</span>; please keep this in mind when removing incidents and adding new ones. Additionally, if the chart axes are visible but no bar is present, then the value is 0.
 
-<img src="./screenshots/ss4.png" alt="Screenshot of filtering by Year and Month" style="width:100%; height:auto;">
+<img src="./screenshots/ss4.png" alt="Screenshot of labels" style="width:100%; height:auto;">
 
 ### Make Predictions
 To switch to Prediction mode, use the dropdown menu at the top of the page.
@@ -111,4 +113,4 @@ Then, click **Predict**. When first entering Prediciton mode, the model will mak
 
 To compare predictions between counties, either click on counties in the Map or click on their names in the List panel. Like in History mode, labels will appear above the Compare panel to serve as a legend, and the X on the right of each label can be used to remove the corresponding county from the comparisons. Up to 5 counties can be compared at a time. When clicking Predict while there are one or more comparisons, the comparisons will automatically update with the new predictions.
 
-<img src="./screenshots/ss5.png" alt="Screenshot of filtering by Year and Month" style="width:100%; height:auto;">
+<img src="./screenshots/ss5.png" alt="Screenshot of Prediction mode" style="width:100%; height:auto;">
