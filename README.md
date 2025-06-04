@@ -7,7 +7,9 @@
 ## Description
 This is a tool to visualize historical weather and damage information for California wildfires between 2013 and 2019. It can also make predictions of damages of future wildfires with user-provided weather information as input. We hope the ease of use of this tool is helpful for civilians and experts alike in understanding wildfire risk.
 
-The functional parts of this repository are divided into two directories: `client` for front-end code, and `server` for back-end code. The front-end utilizes React and D3, while the backend utilizes FastAPI, MongoDB, and Scikit-Learn. Additionally, the public data we have gathered is located in `Wildfire_Historic_Data`.
+The data scraping script, along with gathered data, is located in `/Wildfire_Historic_Data`. Pickle files for the model are located in `/server/models`.
+
+The functional parts of this repository are divided into two directories: `/client` for front-end code, and `/server` for back-end code. The front-end utilizes React and D3, while the backend utilizes FastAPI, MongoDB, and Scikit-Learn.
 
 **Note:** Our tool works best on 1080p resolution or higher.
 
@@ -15,7 +17,7 @@ The functional parts of this repository are divided into two directories: `clien
 After cloning/extracting this repository, follow these steps to run the tool. We recommend using separate terminal windows for client and server processes.
 We assume MongoDB Community and Node.js are installed. For Mac users, we assume Homebrew is already installed.
 ### Back-End
-1. In one terminal window, navigate to `server`:
+1. In one terminal window, navigate to `/server`:
     ```shell
     cd server
     ```
@@ -54,7 +56,7 @@ We assume MongoDB Community and Node.js are installed. For Mac users, we assume 
 8. Optionally, view the API documentation in a web browser at: http://localhost:8000/docs
 
 ### Front-End
-1. In another terminal window, navigate to `client`:
+1. In another terminal window, navigate to `/client`:
     ```shell
     cd client
     ```
