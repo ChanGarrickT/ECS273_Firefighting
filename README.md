@@ -73,19 +73,28 @@ We assume MongoDB Community and Node.js are installed. For Mac users, we assume 
 ## Execution
 The UI has 4 main components:
 - At the top, there is a dropdown menu that allows you to switch between History mode or Prediction mode.
-- On the left is a Map of California counties.
-- In the middle the Map is the List panel, which displays different clickable text depending on the context.
+- On the left is a Map of California counties. You may zoom in and out of the map using a mouse wheel or trackpad. To reset the view, double click on a blank area of the Map panel.
+- In the middle is the the List panel, which displays different clickable text depending on the context.
 - On the right is the Compare panel, where bar charts will appear.
+
+<img src="./screenshots/ss1.png" alt="Screenshot of filtering by Year and Month" style="width:100%; height:auto;">
+
 ### View Historical Information
 By default, the tool is set to History mode, and allows you to filter incidents by **Year and Month**.
 
 Upon selecting a year and month, counties with incidents in the chosen timeframe will turn run in the Map, and the List panel to the right of the map will populate with those counties' names. Click on either a county on the Map, or a name in the List panel, to add wildfire data for that county and timeframe to the Compare panel.
 
+<img src="./screenshots/ss2.png" alt="Screenshot of filtering by Year and Month" style="width:50%; height:auto;">
+
 Alternatively, incidents can also be filtered by **County**. Upon selecting a county, either from the dropdown menu or Map, the List panel will populate with the timeframes of all incidents for that county for which we have data. Click on a timeframe to add that incident to the Compare panel.
 
-Up to 5 incidents can be compared at a time. To remove an incident from the Compare panel, click on the X to the right of the corresponding incident's label above the Compare panel. You may freely switch filter modes without losing selected incidents in the Compare panel. 
+<img src="./screenshots/ss3.png" alt="Screenshot of filtering by Year and Month" style="width:50%; height:auto;">
+
+Up to 5 incidents can be compared at a time. Incidents will be sorted in the order in which they are added. To remove an incident from the Compare panel, click on the X to the right of the corresponding incident's label above the Compare panel. You may freely switch filter modes without losing selected incidents in the Compare panel. 
 
 **Note:** The colors of the bars will always be in the same order: <span style="color:dodgerblue">1st is blue</span>, <span style="color:darkviolet">2nd is purple</span>. <span style="color:darkorange">3rd is orange</span>, <span style="color:lightseagreen">4th is teal</span>, and <span style="color:deeppink">5th is pink</span>; please keep this in mind when removing incidents and adding new ones. Additionally, if the chart axes are visible but no bar is present, then the value is 0.
+
+<img src="./screenshots/ss4.png" alt="Screenshot of filtering by Year and Month" style="width:100%; height:auto;">
 
 ### Make Predictions
 To switch to Prediction mode, use the dropdown menu at the top of the page.
@@ -101,3 +110,5 @@ Part of the Compare panel will be replaced with the Input panel. Use the Input p
 Then, click **Predict**. When first entering Prediciton mode, the model will make predictions based on the default values.
 
 To compare predictions between counties, either click on counties in the Map or click on their names in the List panel. Like in History mode, labels will appear above the Compare panel to serve as a legend, and the X on the right of each label can be used to remove the corresponding county from the comparisons. Up to 5 counties can be compared at a time. When clicking Predict while there are one or more comparisons, the comparisons will automatically update with the new predictions.
+
+<img src="./screenshots/ss5.png" alt="Screenshot of filtering by Year and Month" style="width:100%; height:auto;">
